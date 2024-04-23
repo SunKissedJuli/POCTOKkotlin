@@ -1,0 +1,36 @@
+<resources>
+    <string name="app_name">POCTOKkotlin</string>
+    <string name="login_toRegister">ЕЩЁ НЕТ АККАУНТА?</string>
+    <string name="login_toAutorize">УЖЕ ЕСТЬ АККАУНТ?</string>
+    <string name="login_registration">РЕГИСТРАЦИЯ</string>
+    <string name="login_autorization">АВТОРИЗАЦИЯ</string>
+    <string name="login_button_registration">ЗАРЕГИСТРИРОВАТЬСЯ</string>
+    <string name="login_button_autorization">ВОЙТИ</string>
+    <string name="user_page_go">ПЕРЕЙТИ</string>
+    <string name="button_head_shedule">ПОЛИВ</string>
+    <string name="button_head_photo">ФОТО</string>
+    <string name="button_head_note">ЗАПИСИ</string>
+    <string name="button_head_plant">РАСТЕНИЯ</string>
+    <string name="user_head_change">ИЗМЕНИТЬ</string>
+    <string name="bottom_sheet_wants">Что вы хотите добавить?</string>
+    <string name="bottom_sheet_note">ЗАПИСЬ</string>
+    <string name="bottom_sheet_plant">РАСТЕНИЕ</string>
+    <string name="bottom_sheet_poliv">ПОЛИВ</string>
+    <string name="note_hint">Начните что-нибудь писать...</string>
+    <string name="shedule_name">График полива</string>
+    <string name="watering_ml">мл</string>
+    <string name="small_change">Изменить</string>
+    <string name="small_add">Добавить</string>
+    <string name="last_watering">Ваш последний полив</string>
+    <string name="add_watering">Добавить полив</string>
+    <string name="small_watering">Полив</string>
+    <string name="register_nick">Никнейм:</string>
+    <string name="register_about">Немного о себе:</string>
+    <string name="register_go">Дальше >></string>
+    <string name="addplant_changephoto">СМЕНИТЬ ФОТО</string>
+    <string name="addplant_name">Название растения</string>
+    <string name="addplant_description">Тут можно написать описание растения</string>
+    <string name="add_data">Дата</string>
+    <string name="addplant_save">СОХРАНИТЬ РАСТЕНИЕ</string>
+
+</resources>
