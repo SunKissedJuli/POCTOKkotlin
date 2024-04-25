@@ -18,6 +18,10 @@ fun SetUser(newUser : UserLoginDataResponse){
     user = newUser
 }
 
+fun RemoveUser(){
+    user = null
+}
+
 fun GetPlant() : Plant?{
     if(plant==null){
         plant = Plant(null, null, 0, null, user?.userid,user, null,null)

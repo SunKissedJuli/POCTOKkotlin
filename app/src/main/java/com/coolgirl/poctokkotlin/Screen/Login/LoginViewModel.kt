@@ -8,6 +8,7 @@ import com.coolgirl.poctokkotlin.api.ApiClient
 import com.coolgirl.poctokkotlin.api.ApiController
 import com.coolgirl.poctokkotlin.Models.UserLoginDataResponse
 import com.coolgirl.poctokkotlin.R
+import com.coolgirl.poctokkotlin.SetLoginData
 import com.coolgirl.poctokkotlin.SetUser
 import com.coolgirl.poctokkotlin.navigate.Screen
 import retrofit2.Call
@@ -59,6 +60,7 @@ class LoginViewModel : ViewModel() {
                     if(response.code()==200){
                         Log.d("Tag", "Проверка юзера (LoginViewModel) AutorizeClient user = " + response.body())
                         response.body()?.let { SetUser(it)}
+                        response.body()?.let { SetLoginData(it) }
                         navController.navigate(Screen.UserPage.user_id(response.body()!!.userid))
                     }
                 }

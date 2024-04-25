@@ -35,6 +35,7 @@ import com.coolgirl.poctokkotlin.R
 @Composable
 fun AddPlantScreen(navController: NavController){
     var viewModel : AddPlantViewModel = viewModel()
+    viewModel.CreatePlant()
     SetAppPlantScreen(navController, viewModel)
 }
 

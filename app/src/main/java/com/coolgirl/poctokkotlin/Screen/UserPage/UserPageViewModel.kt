@@ -1,6 +1,5 @@
 package com.coolgirl.poctokkotlin.Screen.UserPage
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -16,12 +15,11 @@ import com.coolgirl.poctokkotlin.api.ApiController
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import kotlin.random.Random
 
 class UserPageViewModel : ViewModel() {
     var user : UserLoginDataResponse? = GetUser()
     var change by mutableStateOf("")
-    var LoadNotesStatus =  com.coolgirl.poctokkotlin.Screen.UserPage.LoadNotesStatus.NOT_STARTED;
+    var DataLoaded by mutableStateOf("")
     private var whatItIs = "plants"
 
     fun WhatItIs() : String{
@@ -44,30 +42,38 @@ class UserPageViewModel : ViewModel() {
     }
 
     fun GetPhotos(): List<Notes?>?{
-        Log.d("tag", "userPageScreen GetPhotos")
         var notes = mutableListOf<Notes>()
-        for(item in user?.notes!!){
-            if (item != null && item.image != null && !item.image.equals("")) {
-                Log.d("tag", "userPageScreen GetPhotos add = " + item)
-                notes.add(item)
+        user = GetUser()
+        if(user?.notes!=null){
+            for(item in user?.notes!!){
+                if (item != null && item.image != null && !item.image.equals("")) {
+                    notes.add(item)
+                }
             }
+            return notes.sortedByDescending { it?.noteid }
         }
-        Log.d("tag", "userPageScreen GetPhotos return = " + notes)
-        return notes
+       return null
     }
 
     fun GetNotes() : List<Notes?>? {
         var notes = mutableListOf<Notes>()
-        for(item in user?.notes!!){
-            if (item != null && item.image == null || item!!.image.equals("")) {
-                notes.add(item)
+        user = GetUser()
+        if(user?.notes!=null){
+            for(item in user?.notes!!){
+                if(item==null){
+                }else if (item != null && item.image == null || item!!.image.equals("")) {
+                    notes.add(item)
+                }
             }
+            return notes.sortedByDescending { it?.noteid }
         }
-        return notes
+        return null
+
     }
 
     fun GetPlants() : List<Plant?>? {
-        return user?.plants
+        user = GetUser()
+        return user?.plants?.sortedByDescending { it?.plantid }
     }
 
     fun GetPlantName(plantId : Int) : String{
@@ -81,18 +87,19 @@ class UserPageViewModel : ViewModel() {
         return "Общая запись"
     }
 
-    fun LoadNotes(){
+    fun LoadNotes(userId : Int){
+        var id = userId
+        if(id==0){ id = GetUser()!!.userid }
+
         var apiClient = ApiClient.start().create(ApiController::class.java)
-        val call: Call<UserLoginDataResponse> = apiClient.getUserProfileData(user!!.userid)
+        val call: Call<UserLoginDataResponse> = apiClient.getUserProfileData(id)
         call.enqueue(object : Callback<UserLoginDataResponse> {
             override fun onResponse(call: Call<UserLoginDataResponse>, response: Response<UserLoginDataResponse>) {
                 if(response.code()==200){
                     user = response.body()
                     user?.let { SetUser(it) }
-                    Log.d("tag", "Проверка ноутс LoadNotes notes = " +  user?.notes)
-                    Log.d("tag", "Проверка ноутс LoadNotes plants = " +  user?.plants)
-                    var LoadNotesStatus =  com.coolgirl.poctokkotlin.Screen.UserPage.LoadNotesStatus.COMPLETED;
                     change = RandomString()
+                    DataLoaded = RandomString()
                 }
             }
             override fun onFailure(call: Call<UserLoginDataResponse>, t: Throwable) {

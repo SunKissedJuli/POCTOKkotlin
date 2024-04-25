@@ -1,11 +1,13 @@
 package com.coolgirl.poctokkotlin.navigate
 
+import android.util.Log
+
 
 sealed class Screen(val route: String){
     object Login : Screen("login")
 
     object UserPage : Screen("user_page/{user_id}"){
-        fun user_id(user_id : Int): String{
+        fun user_id(user_id: Int): String{
             return "user_page/$user_id"
         }
     }

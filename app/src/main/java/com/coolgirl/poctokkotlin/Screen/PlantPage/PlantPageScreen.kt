@@ -1,16 +1,16 @@
 package com.coolgirl.poctokkotlin.Screen.PlantPage
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.key
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -23,11 +23,22 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import coil.compose.rememberImagePainter
+import com.coolgirl.poctokkotlin.Common.LoadNotesStatus
 import com.coolgirl.poctokkotlin.Items.*
 import com.coolgirl.poctokkotlin.Items.Watering.WateringItemsViewModel
 import com.coolgirl.poctokkotlin.Models.Notes
+import com.coolgirl.poctokkotlin.Models.Plant
 import com.coolgirl.poctokkotlin.R
+import com.coolgirl.poctokkotlin.Screen.UserPage.*
+import com.coolgirl.poctokkotlin.navigate.Screen
 import kotlinx.coroutines.launch
+import kotlin.math.min
+import kotlin.math.roundToInt
+
+
+private var noteList : List<Notes?>? = null
+private var photoList : List<Notes?>?= null
 
 @Composable
 fun PlantPageScreen(navController: NavHostController, plantId : Int) {
@@ -35,12 +46,22 @@ fun PlantPageScreen(navController: NavHostController, plantId : Int) {
     val viewModel : PlantPageViewModel = viewModel()
     val wateringViewModel : WateringItemsViewModel = viewModel()
     val coroutineScope = rememberCoroutineScope()
-    LaunchedEffect(key1 = Unit) {
-        coroutineScope.launch() {
-            viewModel.LoadPlantData(plantId)
+    var loadNotesStatus by remember { mutableStateOf(LoadNotesStatus.NOT_STARTED) }
+
+    LaunchedEffect(loadNotesStatus) {
+        if (loadNotesStatus == LoadNotesStatus.NOT_STARTED) {
+            coroutineScope.launch {
+                viewModel.LoadPlantData(plantId)
+                loadNotesStatus = LoadNotesStatus.COMPLETED
+            }
         }
     }
-    SetPlantPage(navController,viewModel, wateringViewModel)
+
+    if (loadNotesStatus == LoadNotesStatus.COMPLETED) {
+        noteList = viewModel.GetNotes()
+        photoList = viewModel.GetPhotos()
+        SetPlantPage(navController, viewModel, wateringViewModel)
+    }
 }
 
 
@@ -70,6 +91,7 @@ fun SetPlantPage(navController: NavHostController, viewModel: PlantPageViewModel
                                         .fillMaxHeight(0.85f)
                                         .fillMaxWidth()
                                         .background(colorResource(R.color.blue))){
+                                        Log.d("tag", "хуй PlantPage shedule = " + viewModel.plant!!.wateringSchedule!!.schedule)
                                         Shedule(viewModel.plant!!.wateringSchedule!!.schedule, wateringViewModel)
                                         AddWatering(viewModel.plant!!.plantname, wateringViewModel, true)} }
                                 else{
@@ -81,8 +103,8 @@ fun SetPlantPage(navController: NavHostController, viewModel: PlantPageViewModel
                                         AddWatering(viewModel.plant!!.plantname, wateringViewModel, true)}
                                 }
                             }
-                        "notes" -> NoteList(viewModel, viewModel.GetNotes(), navController)
-                        "photos" -> println("x is 2")
+                        "notes" -> NoteList(viewModel, noteList, navController)
+                        "photos" -> PhotoList(viewModel, photoList, navController)
                         else -> Text("sorry") }
                     if(viewModel.plant!=null){
                         BottomSheet(navController, viewModel.plant!!.userid!!, scope, sheetState) }
@@ -171,6 +193,36 @@ fun NoteList(viewModel: PlantPageViewModel, noteList: List<Notes?>?, navControll
                         Row(modifier = Modifier
                             .fillMaxWidth()
                             .height(20.dp)){}
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun PhotoList(viewModel: PlantPageViewModel, noteList: List<Notes?>?, navController: NavHostController){
+    if(viewModel.WhatItIs().equals("photos")){
+        val columnItems : Int = ((noteList!!.size)!!.toFloat()/3).roundToInt()
+        LazyColumn(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier
+                .fillMaxHeight(0.86f)
+                .fillMaxWidth()
+                .background(colorResource(R.color.blue))) {
+            items(columnItems) { columnIndex ->
+                LazyRow(modifier = Modifier.fillMaxWidth()) {
+                    val count = min(3, noteList.size - columnIndex * 3).coerceIn(1, 3)
+                    items(count) { rowIndex ->
+                        val currentIndex = columnIndex * 3 + rowIndex
+                        Image(
+                            painter = rememberImagePainter("http://45.154.1.94" + (noteList[currentIndex]!!.image)),
+                            contentDescription = "image",
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier
+                                .padding(2.dp)
+                                .size(116.dp)
+                                .clickable { navController.navigate(Screen.Note.note_id(noteList[currentIndex]!!.noteid)) })
                     }
                 }
             }

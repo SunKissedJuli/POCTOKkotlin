@@ -1,6 +1,5 @@
 package com.coolgirl.poctokkotlin.Screen.Registration
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -8,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
 import com.coolgirl.poctokkotlin.GetUser
 import com.coolgirl.poctokkotlin.Models.UserLoginDataResponse
+import com.coolgirl.poctokkotlin.SetLoginData
 import com.coolgirl.poctokkotlin.SetUser
 import com.coolgirl.poctokkotlin.api.ApiClient
 import com.coolgirl.poctokkotlin.api.ApiController
@@ -35,8 +35,8 @@ class RegistrationViewModel : ViewModel() {
         call.enqueue(object : Callback<UserLoginDataResponse> {
             override fun onResponse(call: Call<UserLoginDataResponse>, response: Response<UserLoginDataResponse>) {
                 if(response.code()==200){
-                    Log.d("Tag", "Проверка юзера (LoginViewModel) Registration user = " + response.body())
                     response.body()?.let { SetUser(it) }
+                    response.body()?.let { SetLoginData(it) }
                     navController.navigate(Screen.UserPage.user_id(response.body()!!.userid))
                 }
             }

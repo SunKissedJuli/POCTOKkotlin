@@ -31,46 +31,42 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.runtime.*
 import com.coolgirl.poctokkotlin.Common.DecodeImage
+import com.coolgirl.poctokkotlin.Common.LoadNotesStatus
 import com.coolgirl.poctokkotlin.Items.*
 import com.coolgirl.poctokkotlin.navigate.Screen
 import kotlin.math.min
 import java.util.*
 import kotlin.math.roundToInt
 
-var noteList : List<Notes?>? = null
-var plantList : List<Plant?>?= null
-var photoList : List<Notes?>?= null
-enum class LoadNotesStatus {
-    NOT_STARTED,
-    COMPLETED
-}
+private var noteList : List<Notes?>? = null
+private var plantList : List<Plant?>?= null
+private var photoList : List<Notes?>?= null
+
 @Composable
 fun UserPageScreen(navController: NavHostController, userId : Int) {
-
     val viewModel : UserPageViewModel = viewModel()
     val coroutineScope = rememberCoroutineScope()
-
     var loadNotesStatus by remember { mutableStateOf(LoadNotesStatus.NOT_STARTED) }
 
-    LaunchedEffect(viewModel.LoadNotesStatus) {
+    LaunchedEffect(loadNotesStatus) {
         if (loadNotesStatus == LoadNotesStatus.NOT_STARTED) {
             coroutineScope.launch {
-                viewModel.LoadNotes()
+                viewModel.LoadNotes(userId)
                 loadNotesStatus = LoadNotesStatus.COMPLETED
             }
         }
     }
 
-    if (loadNotesStatus == LoadNotesStatus.COMPLETED) {
-        noteList = viewModel.GetNotes()
-        plantList = viewModel.GetPlants()
-        photoList = viewModel.GetPhotos()
-
-        SetUserPage(navController, viewModel)
+    key(viewModel.DataLoaded){
+        if (loadNotesStatus == LoadNotesStatus.COMPLETED) {
+            noteList = viewModel.GetNotes()
+            plantList = viewModel.GetPlants()
+            photoList = viewModel.GetPhotos()
+            SetUserPage(navController, viewModel)
+        }
     }
 
 }
-
 
 @OptIn(ExperimentalMaterialApi::class)
 @SuppressLint("RestrictedApi")
@@ -119,7 +115,6 @@ fun SetUserHead(viewModel: UserPageViewModel) {
             verticalArrangement = Arrangement.Center
         ) {
             var bitmap : Bitmap? = null
-
             bitmap = viewModel.user?.userimage?.let { DecodeImage(it) }
             Image(
                 painter = rememberImagePainter(bitmap ?: R.drawable.blueimage),
@@ -189,56 +184,31 @@ fun NoteList(viewModel: UserPageViewModel, noteList: List<Notes?>?, navControlle
         }
 }
 
-/*@Composable
-fun PhotoList(viewModel: UserPageViewModel, noteList: List<Notes?>?, navController: NavHostController){
-    if(viewModel.WhatItIs().equals("photos")){
-        var count = noteList?.size
-        LazyColumn(modifier = Modifier
-            .fillMaxWidth()
-            .fillMaxHeight(0.85f)
-            .background(colorResource(R.color.blue))){
-            if (count != null) {
-                items(count){ index ->
-                    if (noteList != null) {
-                        PhotoItem(DecodeImage(noteList[index]!!.image!!))
-                        Row(modifier = Modifier
-                            .fillMaxWidth()
-                            .height(20.dp)){}
-                    }
-                }
-            }
-        }
-    }
-}*/
-
 @Composable
 fun PhotoList(viewModel: UserPageViewModel, noteList: List<Notes?>?, navController: NavHostController){
     if(viewModel.WhatItIs().equals("photos")){
-        val columnItems : Int = ((noteList!!.size)!!.toFloat()/3).roundToInt()
-        Log.d("tag", "userPageScreen PhotoList columnItems = " + columnItems)
-        LazyColumn(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier
-                .fillMaxHeight(0.86f)
-                .fillMaxWidth()) {
-            items(columnItems) { columnIndex ->
-                Log.d("tag", "userPageScreen PhotoList columnIndex = " + columnIndex)
-                LazyRow(modifier = Modifier.fillMaxWidth()) {
-                   // val count = if (columnIndex == columnItems - 1) noteList.size % 3 else 3
-                    val count = min(3, noteList.size - columnIndex * 3).coerceIn(1, 3)
-                    Log.d("tag", "userPageScreen PhotoList count = " + count)
-                    items(count) { rowIndex ->
-                        Log.d("tag", "userPageScreen PhotoList rowIndex = " + rowIndex)
-                        val currentIndex = columnIndex * 3 + rowIndex
-                       Image(
-                     //       painter = rememberImagePainter(DecodeImage(noteList[currentIndex]!!.image!!)),
-                            painter = rememberImagePainter("http://45.154.1.94" + (noteList[currentIndex]!!.image)),
-                            contentDescription = "image",
-                            contentScale = ContentScale.Crop,
-                            modifier = Modifier
-                                .padding(10.dp)
-                                .size(100.dp)
-                                .clickable { navController.navigate(Screen.Note.note_id(noteList[currentIndex]!!.noteid)) })
+        if(noteList!=null){
+            val columnItems : Int = ((noteList!!.size)!!.toFloat()/3).roundToInt()
+            LazyColumn(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier
+                    .fillMaxHeight(0.86f)
+                    .fillMaxWidth()
+                    .background(colorResource(R.color.blue))) {
+                items(columnItems) { columnIndex ->
+                    LazyRow(modifier = Modifier.fillMaxWidth()) {
+                        val count = min(3, noteList.size - columnIndex * 3).coerceIn(1, 3)
+                        items(count) { rowIndex ->
+                            val currentIndex = columnIndex * 3 + rowIndex
+                            Image(
+                                painter = rememberImagePainter("http://45.154.1.94" + (noteList[currentIndex]!!.image)),
+                                contentDescription = "image",
+                                contentScale = ContentScale.Crop,
+                                modifier = Modifier
+                                    .padding(2.dp)
+                                    .size(116.dp)
+                                    .clickable { navController.navigate(Screen.Note.note_id(noteList[currentIndex]!!.noteid)) })
+                        }
                     }
                 }
             }

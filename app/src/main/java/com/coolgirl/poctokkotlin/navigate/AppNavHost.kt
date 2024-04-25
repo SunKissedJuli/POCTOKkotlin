@@ -1,5 +1,6 @@
 package com.coolgirl.poctokkotlin.navigate
 
+import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -29,9 +30,9 @@ fun AppNavHost(
         composable(Screen.UserPage.route,
             arguments = listOf(navArgument("user_id"){
                 type = NavType.IntType
-                defaultValue = 0
-            })){
-            val user_id : Int = it.arguments?.getInt("user_id")!!
+            })){ backStackEntry ->
+            val user_id : Int = backStackEntry.arguments?.getInt("user_id")!!
+            Log.d("tag", "хуй id в AppNavHost = " + user_id)
             UserPageScreen(navController,user_id)
         }
 

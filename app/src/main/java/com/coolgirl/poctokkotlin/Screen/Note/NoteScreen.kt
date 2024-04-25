@@ -3,6 +3,7 @@ package com.coolgirl.poctokkotlin.Screen.Note
 import android.content.Context
 import android.graphics.Paint.Align
 import android.net.Uri
+import android.util.Log
 import android.widget.Spinner
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.compose.foundation.Image
@@ -13,10 +14,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.key
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -35,7 +33,9 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import coil.compose.rememberImagePainter
 import com.coolgirl.poctokkotlin.Common.DecodeImage
+import com.coolgirl.poctokkotlin.Common.LoadNotesStatus
 import com.coolgirl.poctokkotlin.GetUser
+import com.coolgirl.poctokkotlin.Items.SpinnerSample
 import com.coolgirl.poctokkotlin.R
 import com.coolgirl.poctokkotlin.navigate.Screen
 import kotlinx.coroutines.launch
@@ -44,14 +44,24 @@ import kotlinx.coroutines.launch
 fun NoteScreen(navController: NavHostController, noteId : Int?){
     val viewModel : NoteViewModel = viewModel()
     val coroutineScope = rememberCoroutineScope()
+    var loadNotesStatus by remember { mutableStateOf(LoadNotesStatus.NOT_STARTED) }
     if(noteId!=0){
-        LaunchedEffect(key1 = Unit) {
-            coroutineScope.launch() {
-                if (noteId != null) { viewModel.LoadNote(noteId) }
+        LaunchedEffect(loadNotesStatus) {
+            if (loadNotesStatus == LoadNotesStatus.NOT_STARTED) {
+                coroutineScope.launch() {
+                    if (noteId != null) { viewModel.LoadNote(noteId) }
+                    loadNotesStatus = LoadNotesStatus.COMPLETED
+                }
             }
         }
+        if (loadNotesStatus == LoadNotesStatus.COMPLETED) {
+            Log.d("tag", "хуй LoadNote note image = " + viewModel.noteImage)
+            SetNoteScreen(navController,viewModel)
+        }
+    }else{
+        SetNoteScreen(navController,viewModel)
     }
-    SetNoteScreen(navController,viewModel)
+
 }
 
 @Composable
@@ -61,12 +71,15 @@ fun SetNoteScreen(navController : NavHostController, viewModel: NoteViewModel){
         .background(colorResource(R.color.stone))) {
         SetNoteHead(navController, viewModel.GetNoteData(), viewModel, viewModel.OpenGalery())
         key(viewModel.noteImage){
-            if(viewModel.newImage!=null){
-                SetNoteImage(bitmap = viewModel.noteImage)
+            if(viewModel.noteImage!=null && !viewModel.noteImage.equals("")){
+                SetNoteImage(viewModel.noteImage, viewModel)
             }
         }
         SetNoteBody(viewModel)
-        SetNoteBottom(viewModel)
+        if(viewModel.noteType != null){
+            SetNoteBottom(viewModel)
+        }
+
     }
 }
 
@@ -92,18 +105,26 @@ fun SetNoteHead(navController: NavHostController, noteData : String, viewModel: 
 }
 
 @Composable
-fun SetNoteImage(bitmap : String?){
-    Image(
-        painter = rememberImagePainter(bitmap?.let { DecodeImage(it) }),
-        contentDescription = "image",
-    modifier = Modifier.fillMaxWidth())
+fun SetNoteImage(bitmap : String?, viewModel: NoteViewModel){
+    if(viewModel.IsOldImage()){
+        Image(
+            painter = rememberImagePainter("http://45.154.1.94" + bitmap!!),
+            contentDescription = "image",
+            modifier = Modifier.fillMaxWidth())
+    }else{
+        Image(
+            painter = rememberImagePainter(bitmap?.let { DecodeImage(it) }),
+            contentDescription = "image",
+            modifier = Modifier.fillMaxWidth())
+    }
+
 }
 
 @Composable
 fun SetNoteBody(viewModel: NoteViewModel){
     Column(modifier = Modifier
         .fillMaxWidth()
-        .fillMaxHeight(0.8f)) {
+        .fillMaxHeight(0.93f)) {
         BasicTextField(value = viewModel.noteText, onValueChange = {viewModel.UpdateNoteText(it)},
             modifier = Modifier.padding(20.dp),
             textStyle = TextStyle.Default.copy(fontSize = 18.sp, color = colorResource(R.color.brown)),
@@ -121,7 +142,17 @@ fun SetNoteBody(viewModel: NoteViewModel){
 
 @Composable
 fun SetNoteBottom(viewModel: NoteViewModel){
-    Row(modifier = Modifier.fillMaxSize()) {
-        Spinner(LocalContext.current)
+    val items = viewModel.GetSpinnerData()
+    if(viewModel.GetSelectedType(items)<=items.size){
+        Row(modifier = Modifier.fillMaxSize()) {
+            SpinnerSample(
+                items = items,
+                selectedItem = items[viewModel.GetSelectedType(items)].Name,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(colorResource(R.color.blue)),
+                viewModel)
+        }
     }
+
 }

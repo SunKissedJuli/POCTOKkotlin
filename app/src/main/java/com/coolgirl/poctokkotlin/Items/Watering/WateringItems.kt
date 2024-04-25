@@ -1,5 +1,6 @@
 package com.coolgirl.poctokkotlin.Items
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -7,7 +8,7 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
@@ -19,11 +20,18 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewmodel.viewModelFactory
 import com.coolgirl.poctokkotlin.Items.Watering.WateringItemsViewModel
 import com.coolgirl.poctokkotlin.R
 
 @Composable
 fun Shedule(sheduleData : String?, viewModel: WateringItemsViewModel){
+    Log.d("tag", "хуй PlantPage sheduleData = " + sheduleData)
+    if (sheduleData != null) {
+        viewModel.SetShedule(sheduleData)
+        Log.d("tag", "хуй PlantPage sheduleData !=null = " + sheduleData)
+    }
+
     Column(modifier = Modifier
         .fillMaxWidth()
         .height(175.dp)
@@ -49,15 +57,15 @@ fun Shedule(sheduleData : String?, viewModel: WateringItemsViewModel){
                     .padding(start = 10.dp, end = 10.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.Top){
-                    for(i in 0..6){
-                        val state: Char = sheduleData!!.toCharArray().get(i)
-                        when(state.toString()){
-                            "1" -> SetRadioButton(true, i)
-                            "0" -> SetRadioButton(false, i)
+                    LazyRow(){
+                        items(7) { index ->
+                            val state: Char = sheduleData!!.toCharArray().get(index)
+                            val stateBoolean = state == '1'
+                            SetRadioButton(stateBoolean, index, viewModel)
+                            Log.d("tag", "хуй PlantPage stateBoolean = " + stateBoolean)
                         }
                     }
                 }
-
                 Row(modifier = Modifier
                     .fillMaxWidth()
                     .height(5.dp)
@@ -66,7 +74,7 @@ fun Shedule(sheduleData : String?, viewModel: WateringItemsViewModel){
                     .fillMaxSize(),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceAround){
-                    Button(onClick = {  },
+                    Button(onClick = { viewModel.UpdateShedule() },
                         modifier = Modifier
                             .fillMaxWidth(0.5f)
                             .fillMaxHeight(0.75f),
@@ -103,8 +111,9 @@ fun Shedule(sheduleData : String?, viewModel: WateringItemsViewModel){
 }
 
 @Composable
-fun SetRadioButton(state: Boolean, i: Int){
+fun SetRadioButton(state: Boolean, i: Int, viewModel : WateringItemsViewModel){
     var day : String = ""
+    var buttonsState by remember { mutableStateOf(state) }
     when(i){
         0 -> day = "ПН"
         1 -> day = "ВТ"
@@ -114,8 +123,10 @@ fun SetRadioButton(state: Boolean, i: Int){
         5 -> day = "Сб"
         6 -> day = "ВС"
     }
+
     Column(modifier = Modifier.width(22.dp)) {
-        RadioButton(selected = state, onClick = { })
+        RadioButton(selected = buttonsState, onClick = {  buttonsState = !buttonsState
+            viewModel.UpdateLocalShedule(i, buttonsState) })
         Text(text = day, fontSize = 12.sp, color = colorResource(R.color.brown), fontWeight = FontWeight.Bold, modifier = Modifier.padding(start = 3.dp))
     }
 }
