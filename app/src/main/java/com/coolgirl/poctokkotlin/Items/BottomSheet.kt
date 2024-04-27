@@ -19,6 +19,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import coil.compose.rememberImagePainter
+import com.coolgirl.poctokkotlin.GetUser
 import com.coolgirl.poctokkotlin.R
 import com.coolgirl.poctokkotlin.navigate.Screen
 import kotlinx.coroutines.CoroutineScope
@@ -97,14 +99,16 @@ fun BottomSheet(navController: NavHostController, userId: Int, scope: CoroutineS
             fontSize = 85.sp,
             fontWeight = FontWeight.ExtraBold)
 
+        var userIcon : String? = null
+        userIcon = GetUser()?.userimage?.let { "http://45.154.1.94" + it }
         Image(
-            painter = painterResource(R.drawable.avatar1),
+            painter = rememberImagePainter(userIcon ?: R.drawable.user_icon),
             contentDescription = "image",
             contentScale = ContentScale.Crop,
             modifier = Modifier
                 .clickable { navController.navigate(Screen.UserPage.user_id(userId)) }
                 .padding(5.dp)
-                .size(60.dp)
+                .size(55.dp)
                 .clip(CircleShape))
     }
 }

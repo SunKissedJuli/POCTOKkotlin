@@ -32,5 +32,6 @@
     <string name="addplant_description">Тут можно написать описание растения</string>
     <string name="add_data">Дата</string>
     <string name="addplant_save">СОХРАНИТЬ РАСТЕНИЕ</string>
+    <string name="history_header">История полива</string>
 
 </resources>

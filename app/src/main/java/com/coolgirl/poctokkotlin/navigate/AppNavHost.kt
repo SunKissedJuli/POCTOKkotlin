@@ -1,6 +1,5 @@
 package com.coolgirl.poctokkotlin.navigate
 
-import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -32,7 +31,6 @@ fun AppNavHost(
                 type = NavType.IntType
             })){ backStackEntry ->
             val user_id : Int = backStackEntry.arguments?.getInt("user_id")!!
-            Log.d("tag", "хуй id в AppNavHost = " + user_id)
             UserPageScreen(navController,user_id)
         }
 

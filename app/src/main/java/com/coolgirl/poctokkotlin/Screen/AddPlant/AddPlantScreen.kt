@@ -81,7 +81,7 @@ fun AddPlantHead(navController: NavController, viewModel: AddPlantViewModel){
             .padding(15.dp),
         verticalArrangement = Arrangement.SpaceEvenly,
         horizontalAlignment = Alignment.CenterHorizontally) {
-            Image(painter = painterResource(R.drawable.blueimage),
+            Image(painter = painterResource(R.drawable.plant_icon),
                 contentDescription = "image",
                 contentScale = ContentScale.Crop,
                 modifier = Modifier

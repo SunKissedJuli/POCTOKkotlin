@@ -5,10 +5,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
-import com.coolgirl.poctokkotlin.GetPlant
-import com.coolgirl.poctokkotlin.GetUser
+import com.coolgirl.poctokkotlin.*
 import com.coolgirl.poctokkotlin.Models.Plant
-import com.coolgirl.poctokkotlin.SetPlant
+import com.coolgirl.poctokkotlin.Models.WateringSchedule
 import com.coolgirl.poctokkotlin.api.ApiClient
 import com.coolgirl.poctokkotlin.api.ApiController
 import com.coolgirl.poctokkotlin.navigate.Screen
@@ -32,12 +31,15 @@ class AddPlantViewModel : ViewModel() {
         SetPlant(plant!!)}
 
     fun CreatePlant(){
-        SetPlant(Plant(null,null,0,null, GetUser()!!.userid,null,null,null))
+      //  SetPlant(Plant(null,null,0,null, GetUser()!!.userid, GetUserFor(),null,null))
         plant = GetPlant()
     }
 
     fun Save(navController: NavController){
         var plant = GetPlant()
+        if(plant!!.wateringSchedule==null){
+           plant.wateringSchedule = WateringSchedule(plant.plantid, plant.userid, "0000000", 0, GetPlantFor() )
+        }
         if(plantNickname==null){
             //дописать
         }else{
@@ -47,6 +49,8 @@ class AddPlantViewModel : ViewModel() {
                 override fun onResponse(call: Call<Plant>, response: Response<Plant>) {
                     if(response.code()==200){
                         response.body()?.let { SetPlant(it) }
+                        navController.navigate(Screen.PlantPage.plant_id(response.body()!!.plantid!!))
+                    }else if(response.code()==204){
                         navController.navigate(Screen.PlantPage.plant_id(response.body()!!.plantid!!))
                     }
                 }

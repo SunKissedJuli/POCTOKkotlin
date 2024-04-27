@@ -1,9 +1,7 @@
 package com.coolgirl.poctokkotlin.Screen.PlantPage
 
 import android.util.Log
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -14,21 +12,28 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
+import androidx.compose.ui.input.nestedscroll.NestedScrollSource
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import coil.compose.rememberImagePainter
 import com.coolgirl.poctokkotlin.Common.LoadNotesStatus
+import com.coolgirl.poctokkotlin.GetPlant
 import com.coolgirl.poctokkotlin.Items.*
 import com.coolgirl.poctokkotlin.Items.Watering.WateringItemsViewModel
 import com.coolgirl.poctokkotlin.Models.Notes
 import com.coolgirl.poctokkotlin.Models.Plant
+import com.coolgirl.poctokkotlin.Models.WateringHistory
 import com.coolgirl.poctokkotlin.R
 import com.coolgirl.poctokkotlin.Screen.UserPage.*
 import com.coolgirl.poctokkotlin.navigate.Screen
@@ -39,6 +44,7 @@ import kotlin.math.roundToInt
 
 private var noteList : List<Notes?>? = null
 private var photoList : List<Notes?>?= null
+private var historyList : List<WateringHistory?>?= null
 
 @Composable
 fun PlantPageScreen(navController: NavHostController, plantId : Int) {
@@ -60,6 +66,7 @@ fun PlantPageScreen(navController: NavHostController, plantId : Int) {
     if (loadNotesStatus == LoadNotesStatus.COMPLETED) {
         noteList = viewModel.GetNotes()
         photoList = viewModel.GetPhotos()
+        historyList = viewModel.GetHistoryList()
         SetPlantPage(navController, viewModel, wateringViewModel)
     }
 }
@@ -84,34 +91,14 @@ fun SetPlantPage(navController: NavHostController, viewModel: PlantPageViewModel
                 SetButtonHead(viewModel)
                 key(viewModel.change) {
                     when (viewModel.WhatItIs()) {
-                        "shedule" ->
-                            if(viewModel.plant!!.plantname!=null){
-                                if(viewModel.plant!!.wateringSchedule?.schedule !=null) {
-                                    Column(modifier = Modifier
-                                        .fillMaxHeight(0.85f)
-                                        .fillMaxWidth()
-                                        .background(colorResource(R.color.blue))){
-                                        Log.d("tag", "хуй PlantPage shedule = " + viewModel.plant!!.wateringSchedule!!.schedule)
-                                        Shedule(viewModel.plant!!.wateringSchedule!!.schedule, wateringViewModel)
-                                        AddWatering(viewModel.plant!!.plantname, wateringViewModel, true)} }
-                                else{
-                                    Column(modifier = Modifier
-                                        .fillMaxHeight(0.85f)
-                                        .fillMaxWidth()
-                                        .background(colorResource(R.color.blue))) {
-                                        Shedule("0000000", wateringViewModel)
-                                        AddWatering(viewModel.plant!!.plantname, wateringViewModel, true)}
-                                }
-                            }
+                        "shedule" -> PlantWatering(viewModel, wateringViewModel)
                         "notes" -> NoteList(viewModel, noteList, navController)
                         "photos" -> PhotoList(viewModel, photoList, navController)
                         else -> Text("sorry") }
                     if(viewModel.plant!=null){
                         BottomSheet(navController, viewModel.plant!!.userid!!, scope, sheetState) }
                     }
-
                 }
-
         })
 }
 
@@ -131,8 +118,10 @@ fun SetPlantHead(viewModel: PlantPageViewModel) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
+            var plantIcon : String? = null
+            plantIcon = GetPlant()?.plantimage?.let { "http://45.154.1.94" + it }
             Image(
-                painter = painterResource(R.drawable.avatar1),
+                painter = rememberImagePainter(plantIcon ?: R.drawable.plant_icon),
                 contentDescription = "image",
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
@@ -177,6 +166,38 @@ fun SetButtonHead(viewModel: PlantPageViewModel) {
         .background(colorResource(R.color.blue))){}
 }
 
+@Composable
+fun PlantWatering(viewModel: PlantPageViewModel, wateringViewModel : WateringItemsViewModel){
+    val nested = object : NestedScrollConnection {
+        override suspend fun onPostFling(consumed: Velocity, available: Velocity): Velocity {
+            return super.onPostFling(consumed, available)
+        }
+        override fun onPostScroll(
+            consumed: Offset,
+            available: Offset,
+            source: NestedScrollSource
+        ): Offset {
+            return super.onPostScroll(consumed, available, source)
+        }
+        override suspend fun onPreFling(available: Velocity): Velocity {
+            return super.onPreFling(available)
+        }
+        override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
+            return super.onPreScroll(available, source)
+        }
+    }
+    if(viewModel.plant!!.plantname!=null){
+            Column(modifier = Modifier
+                .fillMaxHeight(0.85f)
+                .fillMaxWidth()
+                .nestedScroll(nested)
+                .background(colorResource(R.color.blue))){
+                Shedule(viewModel.plant!!.wateringSchedule?.schedule ?: "0000000" , wateringViewModel)
+                AddWatering(viewModel.plant!!.plantname, wateringViewModel, true)
+                HistoryList(historyList, viewModel)
+            }
+    }
+}
 
 @Composable
 fun NoteList(viewModel: PlantPageViewModel, noteList: List<Notes?>?, navController: NavHostController){
@@ -201,29 +222,68 @@ fun NoteList(viewModel: PlantPageViewModel, noteList: List<Notes?>?, navControll
 }
 
 @Composable
-fun PhotoList(viewModel: PlantPageViewModel, noteList: List<Notes?>?, navController: NavHostController){
+fun PhotoList(viewModel: PlantPageViewModel, photoList: List<Notes?>?, navController: NavHostController){
     if(viewModel.WhatItIs().equals("photos")){
-        val columnItems : Int = ((noteList!!.size)!!.toFloat()/3).roundToInt()
         LazyColumn(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
                 .fillMaxHeight(0.86f)
                 .fillMaxWidth()
                 .background(colorResource(R.color.blue))) {
-            items(columnItems) { columnIndex ->
-                LazyRow(modifier = Modifier.fillMaxWidth()) {
-                    val count = min(3, noteList.size - columnIndex * 3).coerceIn(1, 3)
-                    items(count) { rowIndex ->
-                        val currentIndex = columnIndex * 3 + rowIndex
-                        Image(
-                            painter = rememberImagePainter("http://45.154.1.94" + (noteList[currentIndex]!!.image)),
-                            contentDescription = "image",
-                            contentScale = ContentScale.Crop,
-                            modifier = Modifier
-                                .padding(2.dp)
-                                .size(116.dp)
-                                .clickable { navController.navigate(Screen.Note.note_id(noteList[currentIndex]!!.noteid)) })
+            if(photoList!=null){
+                val columnItems : Int = ((photoList!!.size)!!.toFloat()/3).roundToInt()
+                items(columnItems) { columnIndex ->
+                    LazyRow(modifier = Modifier.fillMaxWidth()) {
+                        val count = min(3, photoList.size - columnIndex * 3).coerceIn(1, 3)
+                        items(count) { rowIndex ->
+                            val currentIndex = columnIndex * 3 + rowIndex
+                            Image(
+                                painter = rememberImagePainter("http://45.154.1.94" + (photoList[currentIndex]!!.image)),
+                                contentDescription = "image",
+                                contentScale = ContentScale.Crop,
+                                modifier = Modifier
+                                    .padding(2.dp)
+                                    .size(116.dp)
+                                    .clickable {
+                                        navController.navigate(
+                                            Screen.Note.note_id(
+                                                photoList[currentIndex]!!.noteid
+                                            )
+                                        )
+                                    })
+                        }
                     }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun HistoryList(historyList : List<WateringHistory?>?, viewModel: PlantPageViewModel){
+    val VerticalScrollConsumer = object : NestedScrollConnection {
+        override fun onPreScroll(available: Offset, source: NestedScrollSource) = available.copy(x = 0f)
+        override suspend fun onPreFling(available: Velocity) = available.copy(x = 0f)
+    }
+    val HorizontalScrollConsumer = object : NestedScrollConnection {
+        override fun onPreScroll(available: Offset, source: NestedScrollSource) = available.copy(y = 0f)
+        override suspend fun onPreFling(available: Velocity) = available.copy(y = 0f)
+    }
+    fun Modifier.disabledVerticalPointerInputScroll(disabled: Boolean = true) =
+        if (disabled) this.nestedScroll(VerticalScrollConsumer) else this
+    fun Modifier.disabledHorizontalPointerInputScroll(disabled: Boolean = true) =
+        if (disabled) this.nestedScroll(HorizontalScrollConsumer) else this
+    var count = historyList?.size
+    LazyColumn(modifier = Modifier
+        .fillMaxSize()
+        .background(colorResource(R.color.blue)).disabledVerticalPointerInputScroll()){
+        if (count != null) {
+            items(count){ index ->
+                if (noteList != null) {
+                    HistoryItem(GetPlant()!!.plantname, historyList?.get(index)!!.date, historyList[index]!!.countofmililiters.toString())
+                    Row(modifier = Modifier
+                        .fillMaxWidth()
+                        .height(20.dp)){}
                 }
             }
         }

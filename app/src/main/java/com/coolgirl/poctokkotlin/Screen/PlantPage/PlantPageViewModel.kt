@@ -9,6 +9,7 @@ import com.coolgirl.poctokkotlin.Common.RandomString
 import com.coolgirl.poctokkotlin.GetUser
 import com.coolgirl.poctokkotlin.Models.Notes
 import com.coolgirl.poctokkotlin.Models.Plant
+import com.coolgirl.poctokkotlin.Models.WateringHistory
 import com.coolgirl.poctokkotlin.SetPlant
 import com.coolgirl.poctokkotlin.api.ApiClient
 import com.coolgirl.poctokkotlin.api.ApiController
@@ -52,6 +53,13 @@ class PlantPageViewModel : ViewModel() {
             if (noteList != null) {
                 return noteList.sortedByDescending { it?.noteid }
             }
+        }
+        return null
+    }
+
+    fun GetHistoryList() : List<WateringHistory?>?{
+        if(plant!=null&& plant!!.wateringHistories!=null){
+            return plant!!.wateringHistories
         }
         return null
     }

@@ -1,8 +1,11 @@
 package com.coolgirl.poctokkotlin.Items
 
+import android.app.DatePickerDialog
 import android.util.Log
+import android.widget.DatePicker
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -11,6 +14,8 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.modifier.modifierLocalConsumer
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -23,23 +28,23 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.coolgirl.poctokkotlin.Items.Watering.WateringItemsViewModel
 import com.coolgirl.poctokkotlin.R
+import java.time.LocalDate
+import java.util.*
 
 @Composable
 fun Shedule(sheduleData : String?, viewModel: WateringItemsViewModel){
-    Log.d("tag", "хуй PlantPage sheduleData = " + sheduleData)
     if (sheduleData != null) {
         viewModel.SetShedule(sheduleData)
-        Log.d("tag", "хуй PlantPage sheduleData !=null = " + sheduleData)
     }
 
     Column(modifier = Modifier
         .fillMaxWidth()
-        .height(175.dp)
+        .height(155.dp)
         .background(colorResource(R.color.blue)),
-        verticalArrangement = Arrangement.Center) {
+        verticalArrangement = Arrangement.Top) {
         Row(modifier = Modifier
             .fillMaxWidth()
-            .height(160.dp)
+            .height(150.dp)
             .background(colorResource(R.color.stone))){
             Column(modifier = Modifier
                 .fillMaxHeight()
@@ -53,7 +58,7 @@ fun Shedule(sheduleData : String?, viewModel: WateringItemsViewModel){
                     modifier = Modifier.padding(top = 10.dp, start = 10.dp))
                 Row(modifier = Modifier
                     .fillMaxWidth()
-                    .fillMaxHeight(0.65f)
+                    .fillMaxHeight(0.6f)
                     .padding(start = 10.dp, end = 10.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.Top){
@@ -62,7 +67,6 @@ fun Shedule(sheduleData : String?, viewModel: WateringItemsViewModel){
                             val state: Char = sheduleData!!.toCharArray().get(index)
                             val stateBoolean = state == '1'
                             SetRadioButton(stateBoolean, index, viewModel)
-                            Log.d("tag", "хуй PlantPage stateBoolean = " + stateBoolean)
                         }
                     }
                 }
@@ -123,11 +127,10 @@ fun SetRadioButton(state: Boolean, i: Int, viewModel : WateringItemsViewModel){
         5 -> day = "Сб"
         6 -> day = "ВС"
     }
-
-    Column(modifier = Modifier.width(22.dp)) {
+    Column(modifier = Modifier.width(33.dp), verticalArrangement = Arrangement.Top) {
         RadioButton(selected = buttonsState, onClick = {  buttonsState = !buttonsState
             viewModel.UpdateLocalShedule(i, buttonsState) })
-        Text(text = day, fontSize = 12.sp, color = colorResource(R.color.brown), fontWeight = FontWeight.Bold, modifier = Modifier.padding(start = 3.dp))
+        Text(text = day, fontSize = 13.sp, color = colorResource(R.color.brown), fontWeight = FontWeight.Bold, modifier = Modifier.padding(start = 9.dp))
     }
 }
 
@@ -139,32 +142,49 @@ fun AddWatering(plantName : String?, viewModel: WateringItemsViewModel, isAdding
 
     Column(modifier = Modifier
         .fillMaxWidth()
-        .height(175.dp)
+        .height(165.dp)
         .background(colorResource(R.color.blue)),
-    verticalArrangement = Arrangement.Center) {
+    verticalArrangement = Arrangement.Top) {
             Row(modifier = Modifier
                 .fillMaxWidth()
-                .height(155.dp)
+                .height(150.dp)
                 .background(colorResource(R.color.stone))){
                 Column(modifier = Modifier
                     .fillMaxHeight()
                     .fillMaxWidth(0.75f),
-                    verticalArrangement = Arrangement.SpaceEvenly,
+                    verticalArrangement = Arrangement.SpaceAround,
                     horizontalAlignment = Alignment.Start) {
                     Text(stringResource(name),
                         color = colorResource(R.color.brown),
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(top = 10.dp, start = 10.dp))
+                        modifier = Modifier.padding(top = 7.dp, start = 10.dp))
                     Text(text = (stringResource(R.string.small_watering) + " " + plantName!!),
                         color = colorResource(R.color.brown),
                         fontSize = 18.sp,
-                        modifier = Modifier.padding(top = 5.dp, start = 10.dp))
-                    Text(text = (stringResource(R.string.add_data) + " " + plantName!!),
-                        color = colorResource(R.color.brown),
-                        fontSize = 18.sp,
-                        modifier = Modifier.padding(top = 5.dp, start = 10.dp))
-                    Button(onClick = {  },
+                        modifier = Modifier.padding(start = 10.dp))
+
+                        val mCalendar = Calendar.getInstance()
+                        val mYear: Int = mCalendar.get(Calendar.YEAR)
+                        val mMonth: Int = mCalendar.get(Calendar.MONTH)
+                        val mDay: Int = mCalendar.get(Calendar.DAY_OF_MONTH)
+                        mCalendar.time = Date()
+                        val mDatePickerDialog = DatePickerDialog(
+                            LocalContext.current,
+                            { _: DatePicker, mYear: Int, mMonth: Int, mDayOfMonth: Int ->
+                                viewModel.UpdateWateringDate("$mDayOfMonth.${mMonth+1}.$mYear")
+                            }, mYear, mMonth, mDay
+                        )
+                        Button(onClick = { mDatePickerDialog.show() },
+                            modifier =  Modifier.height(35.dp),
+                            colors = ButtonDefaults.buttonColors(colorResource(R.color.stone))) {
+                            Text(text = (stringResource(R.string.add_data)) + " " + viewModel.wateringDate,
+                                color = colorResource(R.color.brown),
+                                fontSize = 16.sp)
+
+                    }
+
+                    Button(onClick = { viewModel.AddWatering() },
                         modifier = Modifier
                             .fillMaxWidth(0.6f)
                             .fillMaxHeight(0.58f)
@@ -198,5 +218,4 @@ fun AddWatering(plantName : String?, viewModel: WateringItemsViewModel, isAdding
                 }
             }
     }
-
 }

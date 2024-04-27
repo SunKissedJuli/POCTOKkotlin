@@ -11,7 +11,7 @@ data class UserLoginDataResponse(
     val userid : Int,
     var userdescription : String?,
     var username : String?,
-    val userimage : String?,
+    var userimage : String?,
     var notes: List<Notes?>?,
     var plants: List<Plant?>?
 )

@@ -2,6 +2,7 @@ package com.coolgirl.poctokkotlin.Screen.UserPage
 
 import android.annotation.SuppressLint
 import android.graphics.Bitmap
+import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -27,6 +28,7 @@ import com.coolgirl.poctokkotlin.Models.Plant
 import com.coolgirl.poctokkotlin.R
 import kotlinx.coroutines.launch
 import android.util.Log
+import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.runtime.*
@@ -84,7 +86,7 @@ fun SetUserPage(navController: NavHostController, viewModel: UserPageViewModel){
                 modifier = Modifier
                     .fillMaxSize()
                     .background(colorResource(R.color.stone))) {
-                SetUserHead(viewModel)
+                SetUserHead(viewModel, viewModel.OpenGalery())
                 SetButtonHead(viewModel)
                 key(viewModel.change){
                     when (viewModel.WhatItIs()) {
@@ -101,7 +103,7 @@ fun SetUserPage(navController: NavHostController, viewModel: UserPageViewModel){
 }
 
 @Composable
-fun SetUserHead(viewModel: UserPageViewModel) {
+fun SetUserHead(viewModel: UserPageViewModel,  launcher: ManagedActivityResultLauncher<String, Uri?>) {
     Row(
         Modifier
             .fillMaxWidth()
@@ -114,16 +116,17 @@ fun SetUserHead(viewModel: UserPageViewModel) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            var bitmap : Bitmap? = null
-            bitmap = viewModel.user?.userimage?.let { DecodeImage(it) }
+            var userIcon : String? = null
+            userIcon = viewModel.user?.userimage?.let { "http://45.154.1.94" + it }
             Image(
-                painter = rememberImagePainter(bitmap ?: R.drawable.blueimage),
+                painter = rememberImagePainter(userIcon ?: R.drawable.user_icon),
                 contentDescription = "image",
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .padding(10.dp)
                     .size(130.dp)
-                    .clip(CircleShape))
+                    .clip(CircleShape)
+                    .clickable { launcher.launch("image/*") })
         }
         Column(
             modifier = Modifier

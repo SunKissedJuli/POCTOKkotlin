@@ -12,7 +12,7 @@ interface ApiController {
     fun autorizeUser(@Path("login") login : String, @Path("password") password : String) : Call<UserLoginDataResponse>
 
     @Headers("Accept: application/json")
-    @POST("user/postuser")
+    @PUT("user/postuser")
     fun createUser(@Body user: UserLoginDataResponse?): Call<UserLoginDataResponse>
 
     @Headers("Accept: application/json")

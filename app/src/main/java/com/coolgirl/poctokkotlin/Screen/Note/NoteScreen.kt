@@ -76,10 +76,7 @@ fun SetNoteScreen(navController : NavHostController, viewModel: NoteViewModel){
             }
         }
         SetNoteBody(viewModel)
-        if(viewModel.noteType != null){
-            SetNoteBottom(viewModel)
-        }
-
+        SetNoteBottom(viewModel)
     }
 }
 
@@ -110,12 +107,12 @@ fun SetNoteImage(bitmap : String?, viewModel: NoteViewModel){
         Image(
             painter = rememberImagePainter("http://45.154.1.94" + bitmap!!),
             contentDescription = "image",
-            modifier = Modifier.fillMaxWidth())
+            modifier = Modifier.fillMaxWidth().fillMaxHeight(0.4f))
     }else{
         Image(
             painter = rememberImagePainter(bitmap?.let { DecodeImage(it) }),
             contentDescription = "image",
-            modifier = Modifier.fillMaxWidth())
+            modifier = Modifier.fillMaxWidth().fillMaxHeight(0.4f))
     }
 
 }
@@ -123,8 +120,7 @@ fun SetNoteImage(bitmap : String?, viewModel: NoteViewModel){
 @Composable
 fun SetNoteBody(viewModel: NoteViewModel){
     Column(modifier = Modifier
-        .fillMaxWidth()
-        .fillMaxHeight(0.93f)) {
+        .fillMaxWidth().fillMaxHeight(0.9f)) {
         BasicTextField(value = viewModel.noteText, onValueChange = {viewModel.UpdateNoteText(it)},
             modifier = Modifier.padding(20.dp),
             textStyle = TextStyle.Default.copy(fontSize = 18.sp, color = colorResource(R.color.brown)),
@@ -143,11 +139,18 @@ fun SetNoteBody(viewModel: NoteViewModel){
 @Composable
 fun SetNoteBottom(viewModel: NoteViewModel){
     val items = viewModel.GetSpinnerData()
+    Log.d("tag", " хуй selectedItem = viewModel.GetSelectedType(items) = " + viewModel.GetSelectedType(items))
+    var vool : Boolean = viewModel.GetSelectedType(items)<=items.size
+    Log.d("tag", " хуй selectedItem = items.size = " + items.size)
+    Log.d("tag", " хуй selectedItem = viewModel.GetSelectedType(items)<=items.size = " + vool)
+
     if(viewModel.GetSelectedType(items)<=items.size){
+        Log.d("tag", " хуй selectedItem = items[viewModel.GetSelectedType(items)].Name = " + items[viewModel.GetSelectedType(items)].Name)
+
         Row(modifier = Modifier.fillMaxSize()) {
             SpinnerSample(
                 items = items,
-                selectedItem = items[viewModel.GetSelectedType(items)].Name,
+                 selectedItem = items[viewModel.GetSelectedType(items)].Name,
                 modifier = Modifier
                     .fillMaxSize()
                     .background(colorResource(R.color.blue)),
