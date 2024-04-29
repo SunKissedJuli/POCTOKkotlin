@@ -1,7 +1,5 @@
 package com.coolgirl.poctokkotlin.api
-import com.coolgirl.poctokkotlin.Models.Notes
-import com.coolgirl.poctokkotlin.Models.Plant
-import com.coolgirl.poctokkotlin.Models.UserLoginDataResponse
+import com.coolgirl.poctokkotlin.Models.*
 import retrofit2.Call
 import retrofit2.http.*
 
@@ -23,10 +21,21 @@ interface ApiController {
     @GET("user/getplantdata/{id}")
     fun getPlantProfileData(@Path("id") id: Int): Call<Plant>
 
+    @Headers("Accept: application/json")
+    @GET("user/getwatering/{id}")
+    fun getWatering(@Path("id") id: Int): Call<WateringResponse>
 
     @Headers("Accept: application/json")
     @PUT("user/postnote")
     fun postNote(@Body note: Notes?): Call<Notes>
+
+    @Headers("Accept: application/json")
+    @POST("user/posthistory")
+    fun postWateringHistory(@Body history: WateringHistoryAdd): Call<Plant>
+
+    @Headers("Accept: application/json")
+    @PUT("user/postshedule")
+    fun postWateringShedule(@Body shedule: WateringScheduleAdd): Call<Plant>
 
     @Headers("Accept: application/json")
     @PUT("user/postplant")

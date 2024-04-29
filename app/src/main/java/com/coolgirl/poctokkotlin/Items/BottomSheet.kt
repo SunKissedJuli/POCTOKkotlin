@@ -87,7 +87,8 @@ fun BottomSheet(navController: NavHostController, userId: Int, scope: CoroutineS
             modifier = Modifier
                 .padding(5.dp)
                 .size(50.dp)
-                .clip(CircleShape))
+                .clip(CircleShape)
+                .clickable{navController.navigate(Screen.WateringPage.route)})
         Text(
             text = "ᐩ",
             modifier = Modifier

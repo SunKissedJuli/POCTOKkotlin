@@ -32,26 +32,26 @@ import java.time.LocalDate
 import java.util.*
 
 @Composable
-fun Shedule(sheduleData : String?, viewModel: WateringItemsViewModel){
+fun Shedule(sheduleData : String?, plantName: String?, viewModel: WateringItemsViewModel){
     if (sheduleData != null) {
         viewModel.SetShedule(sheduleData)
     }
 
     Column(modifier = Modifier
         .fillMaxWidth()
-        .height(155.dp)
+        .height(180.dp)
         .background(colorResource(R.color.blue)),
         verticalArrangement = Arrangement.Top) {
         Row(modifier = Modifier
             .fillMaxWidth()
-            .height(150.dp)
+            .height(165.dp)
             .background(colorResource(R.color.stone))){
             Column(modifier = Modifier
                 .fillMaxHeight()
                 .fillMaxWidth(0.75f),
                 verticalArrangement = Arrangement.SpaceBetween,
                 horizontalAlignment = Alignment.Start) {
-                Text(stringResource(R.string.shedule_name),
+                Text(text = stringResource(R.string.shedule_name) + " " + plantName,
                     color = colorResource(R.color.brown),
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
@@ -207,7 +207,7 @@ fun AddWatering(plantName : String?, viewModel: WateringItemsViewModel, isAdding
                     Row(modifier = Modifier
                         .fillMaxWidth()
                         .fillMaxHeight(0.3f)) {
-                        BasicTextField(value = viewModel.sheduleMl, onValueChange = {viewModel.UpdateSheduleMl(it)},
+                        BasicTextField(value = viewModel.wateringMl, onValueChange = {viewModel.UpdateWateringMl(it)},
                             textStyle = TextStyle.Default.copy(color = colorResource(R.color.brown)),
                             modifier = Modifier
                                 .fillMaxWidth(0.6f)

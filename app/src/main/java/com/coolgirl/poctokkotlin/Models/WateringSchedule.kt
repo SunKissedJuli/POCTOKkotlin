@@ -7,3 +7,9 @@ data class WateringSchedule(
     var id: Int?,
     var plant: Plant?,
 )
+
+data class WateringScheduleAdd(
+    var plantid: Int?,
+    var userid: Int?,
+    var schedule: String?
+)

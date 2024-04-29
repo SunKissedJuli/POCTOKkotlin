@@ -6,10 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
 import com.coolgirl.poctokkotlin.*
 import com.coolgirl.poctokkotlin.Common.RandomString
-import com.coolgirl.poctokkotlin.Models.Plant
-import com.coolgirl.poctokkotlin.Models.UserLoginDataResponse
-import com.coolgirl.poctokkotlin.Models.WateringHistory
-import com.coolgirl.poctokkotlin.Models.WateringSchedule
+import com.coolgirl.poctokkotlin.Models.*
 import com.coolgirl.poctokkotlin.Screen.UserPage.PlantList
 import com.coolgirl.poctokkotlin.api.ApiClient
 import com.coolgirl.poctokkotlin.api.ApiController
@@ -41,19 +38,18 @@ class WateringItemsViewModel : ViewModel() {
         if(plant!!.wateringSchedule!=null){
             plant!!.wateringSchedule!!.schedule = shedule
         }else{
-           var wateringSheduleForPlant = WateringSchedule(plant.plantid, GetUser()!!.userid,shedule,0,null )
-            plant!!.wateringSchedule = wateringSheduleForPlant
+            plant!!.wateringSchedule = WateringSchedule(plant.plantid, GetUser()!!.userid,shedule,0,
+                GetPlantFor() )
         }
-        plant.user = GetUserFor()
-        plant!!.wateringSchedule!!.plant = GetPlantFor()
+      //  plant.user = GetUserFor()
         SetPlant(plant)
     }
 
     fun UpdateShedule(){
         var plant = GetPlant()
-
+        var wateringShedule = WateringScheduleAdd(plant!!.plantid, plant!!.userid, shedule)
         var apiClient = ApiClient.start().create(ApiController::class.java)
-        val call: Call<Plant> = apiClient.postPlant(plant)
+        val call: Call<Plant> = apiClient.postWateringShedule(wateringShedule)
         call.enqueue(object : Callback<Plant> {
             override fun onResponse(call: Call<Plant>, response: Response<Plant>) {
                    if(response.code()==200){
@@ -66,17 +62,9 @@ class WateringItemsViewModel : ViewModel() {
         }
 
     fun AddWatering(){
-        var plant = GetPlant()
-        plant!!.user = GetUserFor()
-        var water = WateringHistory(GetUser()!!.userid, plant.plantid, wateringDate, wateringMl.toInt(), 0, GetPlantFor())
-        if(plant!!.wateringHistories==null){
-          plant.wateringHistories = listOf(water)
-        }else{
-            plant.wateringHistories = plant.wateringHistories?.plus(water)
-        }
-        plant.wateringSchedule!!.plant = GetPlantFor()
+        var wateringHistory = WateringHistoryAdd(GetUser()!!.userid, GetPlant()!!.plantid, wateringDate, wateringMl.toInt())
         var apiClient = ApiClient.start().create(ApiController::class.java)
-        val call: Call<Plant> = apiClient.postPlant(plant)
+        val call: Call<Plant> = apiClient.postWateringHistory(wateringHistory)
         call.enqueue(object : Callback<Plant> {
             override fun onResponse(call: Call<Plant>, response: Response<Plant>) {
                 if(response.code()==200){

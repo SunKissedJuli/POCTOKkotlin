@@ -46,7 +46,7 @@ fun SetAppPlantScreen(navController: NavController, viewModel: AddPlantViewModel
         .fillMaxSize()
         .background(colorResource(R.color.blue)), verticalArrangement = Arrangement.SpaceBetween) {
         AddPlantHead(navController, viewModel)
-        Shedule(sheduleData = "0000000", viewModel = sheduleView)
+        Shedule(sheduleData = "0000000", viewModel.plantNickname, viewModel = sheduleView)
         AddWatering(plantName = viewModel.plantNickname, viewModel = sheduleView, isAdding = true)
         Row(modifier = Modifier
                 .fillMaxWidth()

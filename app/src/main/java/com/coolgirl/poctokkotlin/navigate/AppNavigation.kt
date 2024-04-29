@@ -21,6 +21,8 @@ sealed class Screen(val route: String){
 
     object AddPlant : Screen("addPlant")
 
+    object WateringPage : Screen("watering_page")
+
     object Note : Screen("note/{note_id}") {
         fun note_id(note_id: Int?): String {
             return "note/$note_id"

@@ -2,6 +2,7 @@ package com.coolgirl.poctokkotlin.Screen.PlantPage
 
 import android.util.Log
 import androidx.compose.foundation.*
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -48,7 +49,6 @@ private var historyList : List<WateringHistory?>?= null
 
 @Composable
 fun PlantPageScreen(navController: NavHostController, plantId : Int) {
-
     val viewModel : PlantPageViewModel = viewModel()
     val wateringViewModel : WateringItemsViewModel = viewModel()
     val coroutineScope = rememberCoroutineScope()
@@ -168,31 +168,14 @@ fun SetButtonHead(viewModel: PlantPageViewModel) {
 
 @Composable
 fun PlantWatering(viewModel: PlantPageViewModel, wateringViewModel : WateringItemsViewModel){
-    val nested = object : NestedScrollConnection {
-        override suspend fun onPostFling(consumed: Velocity, available: Velocity): Velocity {
-            return super.onPostFling(consumed, available)
-        }
-        override fun onPostScroll(
-            consumed: Offset,
-            available: Offset,
-            source: NestedScrollSource
-        ): Offset {
-            return super.onPostScroll(consumed, available, source)
-        }
-        override suspend fun onPreFling(available: Velocity): Velocity {
-            return super.onPreFling(available)
-        }
-        override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
-            return super.onPreScroll(available, source)
-        }
-    }
+    val scrollState = rememberScrollState()
     if(viewModel.plant!!.plantname!=null){
             Column(modifier = Modifier
                 .fillMaxHeight(0.85f)
                 .fillMaxWidth()
-                .nestedScroll(nested)
+                .verticalScroll(scrollState)
                 .background(colorResource(R.color.blue))){
-                Shedule(viewModel.plant!!.wateringSchedule?.schedule ?: "0000000" , wateringViewModel)
+                Shedule(viewModel.plant!!.wateringSchedule?.schedule ?: "0000000", viewModel.plant!!.plantname, wateringViewModel)
                 AddWatering(viewModel.plant!!.plantname, wateringViewModel, true)
                 HistoryList(historyList, viewModel)
             }
@@ -259,7 +242,7 @@ fun PhotoList(viewModel: PlantPageViewModel, photoList: List<Notes?>?, navContro
     }
 }
 
-@Composable
+/*@Composable
 fun HistoryList(historyList : List<WateringHistory?>?, viewModel: PlantPageViewModel){
     val VerticalScrollConsumer = object : NestedScrollConnection {
         override fun onPreScroll(available: Offset, source: NestedScrollSource) = available.copy(x = 0f)
@@ -287,6 +270,24 @@ fun HistoryList(historyList : List<WateringHistory?>?, viewModel: PlantPageViewM
                 }
             }
         }
+    }
+}*/
+
+@Composable
+fun HistoryList(historyList : List<WateringHistory?>?, viewModel: PlantPageViewModel){
+   Column(modifier = Modifier
+        .fillMaxSize()
+        .background(colorResource(R.color.blue))){
+       if (historyList != null) {
+           if (historyList.size != null) {
+               for(item in historyList){
+                   HistoryItem(GetPlant()!!.plantname, item!!.date, item!!.countofmililiters.toString())
+                   Row(modifier = Modifier
+                       .fillMaxWidth()
+                       .height(20.dp)){}
+               }
+           }
+       }
     }
 }
 
