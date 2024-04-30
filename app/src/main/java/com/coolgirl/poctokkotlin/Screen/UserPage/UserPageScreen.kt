@@ -1,7 +1,6 @@
 package com.coolgirl.poctokkotlin.Screen.UserPage
 
 import android.annotation.SuppressLint
-import android.graphics.Bitmap
 import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -27,12 +26,10 @@ import com.coolgirl.poctokkotlin.Models.Notes
 import com.coolgirl.poctokkotlin.Models.Plant
 import com.coolgirl.poctokkotlin.R
 import kotlinx.coroutines.launch
-import android.util.Log
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.runtime.*
-import com.coolgirl.poctokkotlin.Common.DecodeImage
 import com.coolgirl.poctokkotlin.Common.LoadNotesStatus
 import com.coolgirl.poctokkotlin.Items.*
 import com.coolgirl.poctokkotlin.navigate.Screen
@@ -86,7 +83,7 @@ fun SetUserPage(navController: NavHostController, viewModel: UserPageViewModel){
                 modifier = Modifier
                     .fillMaxSize()
                     .background(colorResource(R.color.stone))) {
-                SetUserHead(viewModel, viewModel.OpenGalery())
+                SetUserHead(viewModel, viewModel.OpenGalery(), navController)
                 SetButtonHead(viewModel)
                 key(viewModel.change){
                     when (viewModel.WhatItIs()) {
@@ -103,7 +100,7 @@ fun SetUserPage(navController: NavHostController, viewModel: UserPageViewModel){
 }
 
 @Composable
-fun SetUserHead(viewModel: UserPageViewModel,  launcher: ManagedActivityResultLauncher<String, Uri?>) {
+fun SetUserHead(viewModel: UserPageViewModel,  launcher: ManagedActivityResultLauncher<String, Uri?>, navController: NavHostController) {
     Row(
         Modifier
             .fillMaxWidth()
@@ -132,16 +129,30 @@ fun SetUserHead(viewModel: UserPageViewModel,  launcher: ManagedActivityResultLa
             modifier = Modifier
                 .fillMaxWidth()
                 .fillMaxHeight()
-                .padding(25.dp, 20.dp, 0.dp, 10.dp),
-            verticalArrangement = Arrangement.SpaceAround
+                .padding(25.dp, 10.dp, 0.dp, 0.dp),
+            verticalArrangement = Arrangement.Top
         ) {
-            viewModel.user?.username?.let { Text(text = it, fontWeight = FontWeight.Bold, fontSize = 16.sp, color = colorResource(R.color.brown)) }
-            viewModel.user?.userdescription?.let { Text(text = it, softWrap = true, color = colorResource(R.color.brown)) }
+            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.Top){
+                viewModel.user?.username?.let {
+                    Text(text = it, fontWeight = FontWeight.Bold, fontSize = 16.sp, color = colorResource(R.color.brown),
+                        modifier = Modifier.padding(top=35.dp)) }
+                Image(
+                    painter = painterResource(R.drawable.settings),
+                    contentDescription = "settings",
+                    modifier = Modifier
+                        .padding(end = 10.dp)
+                        .size(30.dp)
+                        .clickable {navController.navigate(Screen.Settings.route) })
+            }
+             viewModel.user?.userdescription?.let {
+                 Text(text = it, softWrap = true, color = colorResource(R.color.brown), modifier = Modifier.padding(end = 10.dp, top=20.dp)) }
+
             Button(
                 onClick = { /*TODO*/ },
-                modifier = Modifier.fillMaxWidth(0.7f),
+                modifier = Modifier.fillMaxWidth(0.7f).padding(top=20.dp),
                 colors = ButtonDefaults.buttonColors(colorResource(R.color.stone)))
             { Text(text = stringResource(R.string.user_head_change), color = colorResource(R.color.brown), fontSize = 13.sp) }
+
         }
     }
 }

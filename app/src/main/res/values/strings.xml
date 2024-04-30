@@ -33,5 +33,6 @@
     <string name="add_data">Дата</string>
     <string name="addplant_save">СОХРАНИТЬ РАСТЕНИЕ</string>
     <string name="history_header">История полива</string>
+    <string name="settings">Настройки</string>
 
 </resources>

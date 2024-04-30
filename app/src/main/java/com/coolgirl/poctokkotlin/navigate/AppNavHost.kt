@@ -11,6 +11,7 @@ import com.coolgirl.poctokkotlin.Screen.Login.LoginScreen
 import com.coolgirl.poctokkotlin.Screen.Note.NoteScreen
 import com.coolgirl.poctokkotlin.Screen.PlantPage.PlantPageScreen
 import com.coolgirl.poctokkotlin.Screen.RegistrationScreen
+import com.coolgirl.poctokkotlin.Screen.Settings.SettingsScreen
 import com.coolgirl.poctokkotlin.Screen.UserPage.UserPageScreen
 import com.coolgirl.poctokkotlin.Screen.WateringPage.WateringPageScreen
 
@@ -59,6 +60,10 @@ fun AppNavHost(
 
         composable(Screen.AddPlant.route){
             AddPlantScreen(navController)
+        }
+
+        composable(Screen.Settings.route){
+            SettingsScreen(navController)
         }
 
         composable(Screen.WateringPage.route) {

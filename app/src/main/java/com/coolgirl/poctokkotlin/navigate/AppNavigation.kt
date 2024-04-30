@@ -21,6 +21,8 @@ sealed class Screen(val route: String){
 
     object AddPlant : Screen("addPlant")
 
+    object Settings : Screen("settings")
+
     object WateringPage : Screen("watering_page")
 
     object Note : Screen("note/{note_id}") {

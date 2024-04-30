@@ -146,18 +146,6 @@ fun HistoryItem(plantName : String?, data : String?, ml : String?){
         }
 }
 
-@Composable
-fun ImageItemForBottomSheet(image : kotlin.Int){
-    Image(
-        painter = painterResource(image),
-        contentDescription = "image",
-        contentScale = ContentScale.Crop,
-        modifier = Modifier
-            .padding(15.dp)
-            .size(90.dp)
-            .clip(CircleShape)
-            .border(2.dp, colorResource(R.color.brown), CircleShape))
-}
 
 
 
