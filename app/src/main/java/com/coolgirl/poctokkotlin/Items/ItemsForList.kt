@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import android.widget.DatePicker
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -143,6 +144,19 @@ fun HistoryItem(plantName : String?, data : String?, ml : String?){
                 }
             }
         }
+}
+
+@Composable
+fun ImageItemForBottomSheet(image : kotlin.Int){
+    Image(
+        painter = painterResource(image),
+        contentDescription = "image",
+        contentScale = ContentScale.Crop,
+        modifier = Modifier
+            .padding(15.dp)
+            .size(90.dp)
+            .clip(CircleShape)
+            .border(2.dp, colorResource(R.color.brown), CircleShape))
 }
 
 

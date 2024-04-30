@@ -175,7 +175,7 @@ fun PlantWatering(viewModel: PlantPageViewModel, wateringViewModel : WateringIte
                 .fillMaxWidth()
                 .verticalScroll(scrollState)
                 .background(colorResource(R.color.blue))){
-                Shedule(viewModel.plant!!.wateringSchedule?.schedule ?: "0000000", viewModel.plant!!.plantname, wateringViewModel)
+                Shedule(viewModel.plant!!.wateringSchedule?.schedule ?: "0000000", viewModel.plant!!.plantname, viewModel.plant!!.plantid, wateringViewModel)
                 AddWatering(viewModel.plant!!.plantname, wateringViewModel, true)
                 HistoryList(historyList, viewModel)
             }

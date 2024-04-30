@@ -101,7 +101,7 @@ fun SetNotifications(){
 fun SheduleList(sheduleList : List<WateringSchedule?>?, viewModel: WateringPageViewModel){
     if(sheduleList!=null){
         for(item in sheduleList){
-            Shedule(item!!.schedule ?: "0000000", viewModel.GetPlantName(item.plantid!!), wateringView!!)
+            Shedule(item!!.schedule ?: "0000000", viewModel.GetPlantName(item.plantid!!), item.plantid, wateringView!!)
         }
     }
 }

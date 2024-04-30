@@ -9,7 +9,7 @@
     <color name="white">#FFFFFFFF</color>
     <color name="blue">#94E1FF</color>
     <color name="brown">#7E4720</color> //прошлая версия #4C2F27
-    <color name="green">#00FFA1</color>
+    <color name="green">#00FFA1</color> //60be7a #00FFA1
     <color name="gray">#7f000000</color>
     <color name="stone">#E8F7F5</color>
 </resources>

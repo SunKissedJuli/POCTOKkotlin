@@ -32,7 +32,7 @@ import java.time.LocalDate
 import java.util.*
 
 @Composable
-fun Shedule(sheduleData : String?, plantName: String?, viewModel: WateringItemsViewModel){
+fun Shedule(sheduleData : String?, plantName: String?, plantId : Int?, viewModel: WateringItemsViewModel){
     if (sheduleData != null) {
         viewModel.SetShedule(sheduleData)
     }
@@ -78,7 +78,11 @@ fun Shedule(sheduleData : String?, plantName: String?, viewModel: WateringItemsV
                     .fillMaxSize(),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceAround){
-                    Button(onClick = { viewModel.UpdateShedule() },
+                    Button(onClick = {
+                        if (plantId != null) {
+                            viewModel.UpdateShedule(plantId)
+                        }
+                    },
                         modifier = Modifier
                             .fillMaxWidth(0.5f)
                             .fillMaxHeight(0.75f),

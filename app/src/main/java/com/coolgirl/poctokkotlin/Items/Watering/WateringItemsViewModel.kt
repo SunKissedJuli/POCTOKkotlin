@@ -45,9 +45,8 @@ class WateringItemsViewModel : ViewModel() {
         SetPlant(plant)
     }
 
-    fun UpdateShedule(){
-        var plant = GetPlant()
-        var wateringShedule = WateringScheduleAdd(plant!!.plantid, plant!!.userid, shedule)
+    fun UpdateShedule(plantId: Int){
+        var wateringShedule = WateringScheduleAdd(plantId, GetUser()!!.userid, shedule)
         var apiClient = ApiClient.start().create(ApiController::class.java)
         val call: Call<Plant> = apiClient.postWateringShedule(wateringShedule)
         call.enqueue(object : Callback<Plant> {

@@ -2,14 +2,14 @@ package com.coolgirl.poctokkotlin.Screen
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -23,17 +23,35 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.coolgirl.poctokkotlin.Items.ImageItemForBottomSheet
 import com.coolgirl.poctokkotlin.R
 import com.coolgirl.poctokkotlin.Screen.Registration.RegistrationViewModel
+import com.coolgirl.poctokkotlin.Screen.UserPage.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun RegistrationScreen(navController: NavController){
     var viewModel : RegistrationViewModel = viewModel()
-    SetRegistrationScreen(navController, viewModel)
+    val sheetState = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden)
+    val scope = rememberCoroutineScope()
+    ModalBottomSheetLayout (
+        sheetShape = RoundedCornerShape(topEnd = 65.dp, topStart = 65.dp),
+        sheetState = sheetState,
+        sheetContent = { UserImageBottomSheet() },
+        scrimColor = colorResource(R.color.gray),
+        content = {
+
+            SetRegistrationScreen(navController, viewModel, scope, sheetState)
+
+        }
+    )
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun SetRegistrationScreen(navController: NavController, viewModel: RegistrationViewModel){
+fun SetRegistrationScreen(navController: NavController, viewModel: RegistrationViewModel, scope: CoroutineScope, sheetState: ModalBottomSheetState){
     Column(modifier = Modifier
         .fillMaxSize()
         .background(colorResource(R.color.blue)), verticalArrangement = Arrangement.SpaceBetween, horizontalAlignment = Alignment.CenterHorizontally) {
@@ -41,6 +59,7 @@ fun SetRegistrationScreen(navController: NavController, viewModel: RegistrationV
             contentDescription = "image",
             contentScale = ContentScale.Crop,
             modifier = Modifier
+                .clickable { scope.launch { sheetState.show() } }
                 .padding(top = 50.dp)
                 .size(150.dp)
                 .clip(CircleShape))
@@ -94,4 +113,30 @@ fun SetRegistrationScreen(navController: NavController, viewModel: RegistrationV
             Text(text = stringResource(R.string.register_go), color = colorResource(R.color.brown), fontSize = 14.sp)
         }
     }
+}
+
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+fun UserImageBottomSheet() {
+   Column(modifier = Modifier
+       .fillMaxWidth()
+       .fillMaxHeight(0.5f)
+       .background(colorResource(R.color.stone)),
+   verticalArrangement = Arrangement.SpaceAround,
+   horizontalAlignment = Alignment.CenterHorizontally) {
+       Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceAround){
+       //    ImageItemForBottomSheet(R.drawable.avatar1)
+           ImageItemForBottomSheet(R.drawable.avatar2)
+       }
+       Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceAround){
+           ImageItemForBottomSheet(R.drawable.avatar3)
+           ImageItemForBottomSheet(R.drawable.avatar4)
+           ImageItemForBottomSheet(R.drawable.avatar5)
+       }
+       Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceAround){
+           ImageItemForBottomSheet(R.drawable.avatar6)
+           ImageItemForBottomSheet(R.drawable.universal1)
+           ImageItemForBottomSheet(R.drawable.univarsal2)
+       }
+   }
 }
