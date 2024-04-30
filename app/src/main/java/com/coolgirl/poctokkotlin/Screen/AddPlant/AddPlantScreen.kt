@@ -2,41 +2,59 @@ package com.coolgirl.poctokkotlin.Screen.AddPlant
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.coolgirl.poctokkotlin.Items.AddWatering
+import coil.compose.rememberImagePainter
+import com.coolgirl.poctokkotlin.Common.DecodeImage
 import com.coolgirl.poctokkotlin.Items.Shedule
 import com.coolgirl.poctokkotlin.Items.Watering.WateringItemsViewModel
 import com.coolgirl.poctokkotlin.R
+import com.coolgirl.poctokkotlin.Screen.scope
+import com.coolgirl.poctokkotlin.Screen.sheetState
+import kotlinx.coroutines.launch
 
+private val fileName = mutableStateOf(0)
+
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun AddPlantScreen(navController: NavController){
     var viewModel : AddPlantViewModel = viewModel()
     viewModel.CreatePlant()
-    SetAppPlantScreen(navController, viewModel)
+    sheetState = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden)
+    scope = rememberCoroutineScope()
+    ModalBottomSheetLayout (
+        sheetShape = RoundedCornerShape(topEnd = 65.dp, topStart = 65.dp),
+        sheetState = sheetState!!,
+        sheetContent = { PlantImageBottomSheet(viewModel) },
+        scrimColor = colorResource(R.color.gray),
+        content = {
+            SetAppPlantScreen(navController, viewModel)
+        }
+    )
 }
 
 @Composable
@@ -46,12 +64,12 @@ fun SetAppPlantScreen(navController: NavController, viewModel: AddPlantViewModel
         .fillMaxSize()
         .background(colorResource(R.color.blue)), verticalArrangement = Arrangement.SpaceBetween) {
         AddPlantHead(navController, viewModel)
-        Shedule(sheduleData = "0000000", viewModel.plantNickname, 0, viewModel = sheduleView)
-        AddWatering(plantName = viewModel.plantNickname, viewModel = sheduleView, isAdding = true)
+        Shedule(sheduleData = "0000000", viewModel.plantNickname, 0, viewModel = sheduleView, true)
+      //  AddWatering(plantName = viewModel.plantNickname, viewModel = sheduleView, isAdding = true)
         Row(modifier = Modifier
-                .fillMaxWidth()
-                .height(100.dp)
-                .background(colorResource(R.color.stone)),
+            .fillMaxWidth()
+            .height(100.dp)
+            .background(colorResource(R.color.stone)),
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically) {
             Button(onClick = { viewModel.Save(navController) },
@@ -69,6 +87,7 @@ fun SetAppPlantScreen(navController: NavController, viewModel: AddPlantViewModel
     }
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun AddPlantHead(navController: NavController, viewModel: AddPlantViewModel){
     Row(modifier = Modifier
@@ -81,14 +100,28 @@ fun AddPlantHead(navController: NavController, viewModel: AddPlantViewModel){
             .padding(15.dp),
         verticalArrangement = Arrangement.SpaceEvenly,
         horizontalAlignment = Alignment.CenterHorizontally) {
-            Image(painter = painterResource(R.drawable.plant_icon),
-                contentDescription = "image",
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .padding(top = 10.dp)
-                    .size(120.dp)
-                    .clip(CircleShape))
-            Button(onClick = {  },
+            key(viewModel.plantImage) {
+                if (viewModel.plantImage != null && !viewModel.plantImage.equals("")) {
+                    Image(
+                        painter = rememberImagePainter(viewModel.plantImage?.let { DecodeImage(it)} ),
+                        contentDescription = "image",
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .padding(top = 10.dp)
+                            .size(120.dp)
+                            .clip(CircleShape))
+                }else{
+                    Image(
+                        painter = painterResource(R.drawable.plant_icon),
+                        contentDescription = "image",
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .padding(top = 10.dp)
+                            .size(120.dp)
+                            .clip(CircleShape))
+                }
+            }
+            Button(onClick = {  scope!!.launch { sheetState!!.show() }},
                 modifier = Modifier
                     .padding(top = 10.dp, bottom = 20.dp, start = 2.dp)
                     .fillMaxWidth(0.90f),
@@ -139,4 +172,51 @@ fun AddPlantHead(navController: NavController, viewModel: AddPlantViewModel){
                 })
         }
     }
+}
+
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+fun PlantImageBottomSheet(viewModel: AddPlantViewModel) {
+    key(fileName.value){
+        if(fileName.value!=0){
+            viewModel.GetFileFromDrawable(fileName.value!!)
+        }
+    }
+
+    Column(modifier = Modifier
+        .fillMaxWidth()
+        .fillMaxHeight(0.5f)
+        .background(colorResource(R.color.stone)),
+        verticalArrangement = Arrangement.SpaceAround,
+        horizontalAlignment = Alignment.CenterHorizontally) {
+        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceAround){
+            ImageItemForPlantBottomSheet(R.drawable.plant1)
+            ImageItemForPlantBottomSheet(R.drawable.plant1)
+            ImageItemForPlantBottomSheet(R.drawable.plant2)
+        }
+        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceAround){
+            ImageItemForPlantBottomSheet(R.drawable.plant3)
+            ImageItemForPlantBottomSheet(R.drawable.plant_icon)
+            ImageItemForPlantBottomSheet(R.drawable.universal1)
+        }
+        Row(modifier = Modifier.fillMaxWidth().padding(start = 20.dp), horizontalArrangement = Arrangement.Start){
+            ImageItemForPlantBottomSheet(R.drawable.univarsal2)
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+fun ImageItemForPlantBottomSheet(image : kotlin.Int){
+    Image(
+        painter = painterResource(image),
+        contentDescription = "image",
+        contentScale = ContentScale.Crop,
+        modifier = Modifier
+            .padding(15.dp)
+            .size(90.dp)
+            .clip(CircleShape)
+            .clickable { fileName.value = image
+                scope!!.launch { sheetState!!.hide() }}
+            .border(2.dp, colorResource(R.color.brown), CircleShape))
 }

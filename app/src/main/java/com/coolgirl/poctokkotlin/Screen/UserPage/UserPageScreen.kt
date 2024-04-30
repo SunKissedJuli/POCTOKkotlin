@@ -219,7 +219,11 @@ fun PhotoList(viewModel: UserPageViewModel, noteList: List<Notes?>?, navControll
                     .background(colorResource(R.color.blue))) {
                 items(columnItems) { columnIndex ->
                     LazyRow(modifier = Modifier.fillMaxWidth()) {
-                        val count = min(3, noteList.size - columnIndex * 3).coerceIn(1, 3)
+                        val count = when (noteList.size - columnIndex * 3) {
+                            1 -> 1
+                            2 -> 2
+                            else -> 3
+                        }
                         items(count) { rowIndex ->
                             val currentIndex = columnIndex * 3 + rowIndex
                             Image(

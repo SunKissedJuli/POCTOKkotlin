@@ -32,7 +32,7 @@ import java.time.LocalDate
 import java.util.*
 
 @Composable
-fun Shedule(sheduleData : String?, plantName: String?, plantId : Int?, viewModel: WateringItemsViewModel){
+fun Shedule(sheduleData : String?, plantName: String?, plantId : Int?, viewModel: WateringItemsViewModel, isnew : Boolean){
     if (sheduleData != null) {
         viewModel.SetShedule(sheduleData)
     }
@@ -78,18 +78,18 @@ fun Shedule(sheduleData : String?, plantName: String?, plantId : Int?, viewModel
                     .fillMaxSize(),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceAround){
-                    Button(onClick = {
-                        if (plantId != null) {
-                            viewModel.UpdateShedule(plantId)
+                    if(!isnew){
+                        Button(onClick = {
+                            if (plantId != null) { viewModel.UpdateShedule(plantId) } },
+                            modifier = Modifier
+                                .fillMaxWidth(0.5f)
+                                .fillMaxHeight(0.75f),
+                            shape = RoundedCornerShape(25.dp),
+                            colors = ButtonDefaults.buttonColors(colorResource(R.color.green))) {
+                            Text(text = stringResource(R.string.small_change), color = colorResource(R.color.brown), fontSize = 12.sp)
                         }
-                    },
-                        modifier = Modifier
-                            .fillMaxWidth(0.5f)
-                            .fillMaxHeight(0.75f),
-                        shape = RoundedCornerShape(25.dp),
-                        colors = ButtonDefaults.buttonColors(colorResource(R.color.green))) {
-                        Text(text = stringResource(R.string.small_change), color = colorResource(R.color.brown), fontSize = 12.sp)
                     }
+
                     //тут колокольчик
                 }
             }

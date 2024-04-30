@@ -67,7 +67,9 @@ fun PlantItem(plantName : String?, plantDescription : String?, plantImage : Stri
         Arrangement.SpaceEvenly,
         Alignment.CenterVertically) {
         var plantIcon : String? = null
-        plantIcon = plantImage?.let { "http://45.154.1.94" + it }
+        if(plantImage!=null&&!plantImage.equals("")&&!plantImage.equals(" ")){
+            plantIcon = plantImage?.let { "http://45.154.1.94" + it }
+        }
         Image(
             painter = rememberImagePainter( plantIcon ?: R.drawable.plant_icon),
             contentDescription = "image",

@@ -169,16 +169,18 @@ fun SetButtonHead(viewModel: PlantPageViewModel) {
 @Composable
 fun PlantWatering(viewModel: PlantPageViewModel, wateringViewModel : WateringItemsViewModel){
     val scrollState = rememberScrollState()
-    if(viewModel.plant!!.plantname!=null){
+    if(viewModel.plant!=null){
+        if(viewModel.plant!!.plantname!=null){
             Column(modifier = Modifier
                 .fillMaxHeight(0.85f)
                 .fillMaxWidth()
                 .verticalScroll(scrollState)
                 .background(colorResource(R.color.blue))){
-                Shedule(viewModel.plant!!.wateringSchedule?.schedule ?: "0000000", viewModel.plant!!.plantname, viewModel.plant!!.plantid, wateringViewModel)
+                Shedule(viewModel.plant!!.wateringSchedule?.schedule ?: "0000000", viewModel.plant!!.plantname, viewModel.plant!!.plantid, wateringViewModel, false)
                 AddWatering(viewModel.plant!!.plantname, wateringViewModel, true)
                 HistoryList(historyList, viewModel)
             }
+        }
     }
 }
 
