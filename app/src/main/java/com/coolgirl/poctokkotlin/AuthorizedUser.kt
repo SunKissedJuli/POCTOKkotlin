@@ -1,13 +1,13 @@
 package com.coolgirl.poctokkotlin
 
-import android.util.Log
+import com.coolgirl.poctokkotlin.Models.Notes
 import com.coolgirl.poctokkotlin.Models.Plant
 import com.coolgirl.poctokkotlin.Models.UserLoginDataResponse
-import com.coolgirl.poctokkotlin.Models.WateringSchedule
 
 
 private var user : UserLoginDataResponse? = null
 private var plant : Plant? = null
+private var note : Notes? = null
 
 fun GetUser() : UserLoginDataResponse?{ return user }
 
@@ -35,6 +35,18 @@ fun GetUserFor() : UserLoginDataResponse{
     user!!.notes = null
     user!!.plants = null
     return user
+}
+
+fun SetNote(newNote : Notes){
+    note = newNote
+}
+
+fun GetNote(): Notes? {
+    return note
+}
+
+fun RemoveNote(){
+    note = null
 }
 
 

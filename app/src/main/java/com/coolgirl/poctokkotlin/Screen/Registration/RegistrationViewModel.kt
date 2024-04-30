@@ -16,7 +16,6 @@ import com.coolgirl.poctokkotlin.SetLoginData
 import com.coolgirl.poctokkotlin.SetUser
 import com.coolgirl.poctokkotlin.api.ApiClient
 import com.coolgirl.poctokkotlin.api.ApiController
-import com.coolgirl.poctokkotlin.coroutineScope
 import com.coolgirl.poctokkotlin.navigate.Screen
 import id.zelory.compressor.Compressor
 import id.zelory.compressor.constraint.default

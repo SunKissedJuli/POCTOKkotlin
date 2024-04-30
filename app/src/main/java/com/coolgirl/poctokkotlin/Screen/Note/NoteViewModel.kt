@@ -14,11 +14,9 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
+import com.coolgirl.poctokkotlin.*
 import com.coolgirl.poctokkotlin.Common.EncodeImage
-import com.coolgirl.poctokkotlin.GetUser
 import com.coolgirl.poctokkotlin.Models.Notes
-import com.coolgirl.poctokkotlin.RemoveUser
-import com.coolgirl.poctokkotlin.SetUser
 import com.coolgirl.poctokkotlin.api.ApiClient
 import com.coolgirl.poctokkotlin.api.ApiController
 import com.coolgirl.poctokkotlin.navigate.Screen
@@ -39,32 +37,41 @@ class NoteViewModel : ViewModel() {
     private var isOldImage = false
     var noteText by mutableStateOf("")
     var noteImage : String? = null
-    var newImage : File? = null
     var noteType : Int = 0
     var noteId : Int = 0
 
-    fun UpdateNoteText(text : String){ noteText = text }
+    fun UpdateNoteText(text : String){ noteText = text
+        SetNote(Notes(GetUser()!!.userid,noteType,noteImage, noteText, noteId,noteData,null))}
 
     fun IsOldImage(): Boolean{
         return isOldImage
     }
 
     fun LoadNote(getNoteId : Int){
-        var notes = GetUser()!!.notes
-        if (notes != null) {
-            for (note in notes){
-                if(note!!.noteid==getNoteId){
-                    noteText = note.notetext!!
-                    noteData = note.notedata!!
-                    noteId = note.noteid!!
-                    noteType = note.plantid!!
-                    if(note.image!=null){
-                        isOldImage = true
-                        noteImage = note.image!!
-                        Log.d("tag", "хуй LoadNote note image = " + noteImage)
+        if(GetNote()!=null){
+            noteText = GetNote()!!.notetext!!
+            noteImage = GetNote()!!.image
+            noteData = GetNote()!!.notedata!!
+            noteId = GetNote()!!.noteid!!
+            noteType = GetNote()!!.plantid!!
+        }else{
+            var notes = GetUser()!!.notes
+            if (notes != null) {
+                for (note in notes){
+                    if(note!!.noteid==getNoteId){
+                        noteText = note.notetext!!
+                        noteData = note.notedata!!
+                        noteId = note.noteid!!
+                        noteType = note.plantid!!
+                        if(note.image!=null){
+                            isOldImage = true
+                            noteImage = note.image!!
+                        }
+                        SetNote(Notes(GetUser()!!.userid,noteType,noteImage, noteText, noteId,noteData,null))
                     }
                 }
             }
+            SetNote(Notes(GetUser()!!.userid,noteType,noteImage, noteText, noteId,noteData,null))
         }
     }
 
@@ -102,52 +109,8 @@ class NoteViewModel : ViewModel() {
         return noteData
     }
 
-    @SuppressLint("Range", "SuspiciousIndentation")
-    @Composable
-    fun OpenGalery(context: Context = LocalContext.current): ManagedActivityResultLauncher<String, Uri?>{
-        var file by remember { mutableStateOf<File?>(null) }
-        val coroutineScope = rememberCoroutineScope()
-        val launcher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
-            val cursor: Cursor? = context.getContentResolver().query(uri!!, null, null, null, null)
-            try {
-                if (cursor != null && cursor.moveToFirst()) {
-                    var fileName = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME))
-                    val iStream : InputStream = context.contentResolver.openInputStream(uri!!)!!
-                    val outputDir : File = context.cacheDir
-                    val outputFile : File = File(outputDir,fileName)
-                    copyStreamToFile(iStream, outputFile)
-                    iStream.close()
-                        coroutineScope.launch() {
-                            file = Compressor.compress(context, outputFile!!) {
-                                default(width = 50, format = Bitmap.CompressFormat.JPEG) }
-                            isOldImage = false;
-                            noteImage = EncodeImage(file!!.path)
-                        }
-                }
-            }finally { cursor!!.close() }
-        }
-        if (file != null && file != newImage) {
-           newImage = file
-        }
-        return launcher
-    }
-
-    fun copyStreamToFile(inputStream: InputStream, outputFile: File) {
-        inputStream.use { input ->
-            val outputStream = FileOutputStream(outputFile)
-            outputStream.use { output ->
-                val buffer = ByteArray(4 * 1024) // buffer size
-                while (true) {
-                    val byteCount = input.read(buffer)
-                    if (byteCount < 0) break
-                    output.write(buffer, 0, byteCount)
-                }
-                output.flush()
-            }
-        }
-    }
-
     fun SaveNote(navController: NavController){
+        RemoveNote()
         if(noteText==null||noteText==""){ navController.navigate(Screen.UserPage.user_id(GetUser()!!.userid))}
         else{
             noteData = ""

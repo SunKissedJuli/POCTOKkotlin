@@ -1,4 +1,4 @@
-package com.coolgirl.poctokkotlin.Screen.UserPage
+package com.coolgirl.poctokkotlin.Screen.ImageChoice
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -12,14 +12,13 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
-import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import com.coolgirl.poctokkotlin.Common.EncodeImage
 import com.coolgirl.poctokkotlin.Common.RandomString
+import com.coolgirl.poctokkotlin.GetNote
 import com.coolgirl.poctokkotlin.GetUser
-import com.coolgirl.poctokkotlin.Models.Notes
-import com.coolgirl.poctokkotlin.Models.Plant
 import com.coolgirl.poctokkotlin.Models.UserLoginDataResponse
-import com.coolgirl.poctokkotlin.SetLoginData
+import com.coolgirl.poctokkotlin.SetNote
 import com.coolgirl.poctokkotlin.SetUser
 import com.coolgirl.poctokkotlin.api.ApiClient
 import com.coolgirl.poctokkotlin.api.ApiController
@@ -34,100 +33,15 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.InputStream
 
-class UserPageViewModel : ViewModel() {
-    var user : UserLoginDataResponse? = GetUser()
-    var change by mutableStateOf("")
-    var DataLoaded by mutableStateOf("")
-    private var whatItIs = "plants"
+class ImageChoiceViewModel : ViewModel() {
+    var image : String? = null
+    var newImage : File? = null
+    var whatItIs : String? = null
+    var go by mutableStateOf("")
 
-    fun WhatItIs() : String{
-        return whatItIs
-    }
-
-    fun ShowNotes(){
-        whatItIs = "notes"
-        change = RandomString()
-    }
-
-    fun ShowPlants(){
-        whatItIs = "plants"
-        change = RandomString()
-    }
-
-    fun ShowPhotos(){
-        whatItIs = "photos"
-        change = RandomString()
-    }
-
-    fun GetPhotos(): List<Notes?>?{
-        var notes = mutableListOf<Notes>()
-        user = GetUser()
-        if(user?.notes!=null){
-            for(item in user?.notes!!){
-                if (item != null && item.image != null && !item.image.equals("")) {
-                    notes.add(item)
-                }
-            }
-            return notes.sortedByDescending { it?.noteid }
-        }
-       return null
-    }
-
-    fun GetNotes() : List<Notes?>? {
-        var notes = mutableListOf<Notes>()
-        user = GetUser()
-        if(user?.notes!=null){
-            for(item in user?.notes!!){
-                if(item==null){
-                }else if (item != null && item.image == null || item!!.image.equals("")) {
-                    notes.add(item)
-                }
-            }
-            return notes.sortedByDescending { it?.noteid }
-        }
-        return null
-
-    }
-
-    fun GetPlants() : List<Plant?>? {
-        user = GetUser()
-        return user?.plants?.sortedByDescending { it?.plantid }
-    }
-
-    fun GetPlantName(plantId : Int) : String{
-        if(user!=null && user!!.plants!=null){
-            for(plant in user!!.plants!!){
-                if (plant!!.plantid == plantId && plant.plantname!=null){
-                    return plant!!.plantname!!
-                }
-            }
-        }
-        return "Общая запись"
-    }
-
-    fun LoadNotes(userId : Int){
-        var id = userId
-        if(id==0){ id = GetUser()!!.userid }
-
-        var apiClient = ApiClient.start().create(ApiController::class.java)
-        val call: Call<UserLoginDataResponse> = apiClient.getUserProfileData(id)
-        call.enqueue(object : Callback<UserLoginDataResponse> {
-            override fun onResponse(call: Call<UserLoginDataResponse>, response: Response<UserLoginDataResponse>) {
-                if(response.code()==200){
-                    user = response.body()
-                    user?.let { SetUser(it) }
-                    change = RandomString()
-                    DataLoaded = RandomString()
-                }
-            }
-            override fun onFailure(call: Call<UserLoginDataResponse>, t: Throwable) {
-                //дописать
-            } })
-    }
-
- /*   @SuppressLint("Range", "SuspiciousIndentation")
+    @SuppressLint("Range", "SuspiciousIndentation")
     @Composable
-    fun OpenGalery(context: Context = LocalContext.current): ManagedActivityResultLauncher<String, Uri?> {
+    fun OpenGalery(navController: NavHostController,context: Context = LocalContext.current): ManagedActivityResultLauncher<String, Uri?> {
         var file by remember { mutableStateOf<File?>(null) }
         val coroutineScope = rememberCoroutineScope()
         val launcher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
@@ -143,10 +57,30 @@ class UserPageViewModel : ViewModel() {
                     coroutineScope.launch() {
                         file = Compressor.compress(context, outputFile!!) {
                             default(width = 50, format = Bitmap.CompressFormat.JPEG) }
-                        PutUserImage(EncodeImage(file!!.path))
+                        image = EncodeImage(file!!.path)
+
+                        when(whatItIs){
+                            "note" ->{ var note = GetNote()
+                                if(image!=null){
+                                    note!!.image = image
+                                    SetNote(note) }
+                                navController.navigate(Screen.Note.note_id(note!!.noteid))
+                            }
+                            "user_page" ->{
+                                PutUserImage(image!!)
+                                if(go!=null&&!go.equals("")){
+                                    navController.navigate(Screen.UserPage.user_id(GetUser()!!.userid))
+                                }
+                            }
+                        }
+
                     }
                 }
+
             }finally { cursor!!.close() }
+        }
+        if (file != null && file != newImage) {
+            newImage = file
         }
         return launcher
     }
@@ -164,7 +98,7 @@ class UserPageViewModel : ViewModel() {
                 output.flush()
             }
         }
-    }*/
+    }
 
     fun PutUserImage(userIcon : String){
         var User = GetUser()
@@ -175,7 +109,7 @@ class UserPageViewModel : ViewModel() {
             override fun onResponse(call: Call<UserLoginDataResponse>, response: Response<UserLoginDataResponse>) {
                 if(response.code()==200){
                     response.body()?.let { SetUser(it) }
-                    DataLoaded = RandomString()
+                    go = "1"
                 }
             }
             override fun onFailure(call: Call<UserLoginDataResponse>, t: Throwable) {

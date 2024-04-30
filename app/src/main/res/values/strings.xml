@@ -34,5 +34,9 @@
     <string name="addplant_save">СОХРАНИТЬ РАСТЕНИЕ</string>
     <string name="history_header">История полива</string>
     <string name="settings">Настройки</string>
+    <string name="image_galery">Галерея</string>
+    <string name="image_galery_description">Вы можете выбрать фотографию из галереи</string>
+    <string name="image_camera">Камера</string>
+    <string name="image_camera_description">Вы можете сделать фото через камеру в приложении</string>
 
 </resources>

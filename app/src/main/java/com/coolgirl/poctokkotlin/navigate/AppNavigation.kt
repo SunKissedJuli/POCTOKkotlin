@@ -23,6 +23,12 @@ sealed class Screen(val route: String){
 
     object Settings : Screen("settings")
 
+    object  ImageChoiceScreen : Screen("image_choice_screen/{what_it_is}"){
+        fun what_it_is(what_it_is : String): String{
+            return "image_choice_screen/$what_it_is"
+        }
+    }
+
     object WateringPage : Screen("watering_page")
 
     object Note : Screen("note/{note_id}") {

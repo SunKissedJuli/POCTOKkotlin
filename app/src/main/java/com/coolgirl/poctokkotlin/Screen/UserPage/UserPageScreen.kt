@@ -83,7 +83,9 @@ fun SetUserPage(navController: NavHostController, viewModel: UserPageViewModel){
                 modifier = Modifier
                     .fillMaxSize()
                     .background(colorResource(R.color.stone))) {
-                SetUserHead(viewModel, viewModel.OpenGalery(), navController)
+                SetUserHead(viewModel,
+                 //   viewModel.OpenGalery(),
+                    navController)
                 SetButtonHead(viewModel)
                 key(viewModel.change){
                     when (viewModel.WhatItIs()) {
@@ -100,7 +102,9 @@ fun SetUserPage(navController: NavHostController, viewModel: UserPageViewModel){
 }
 
 @Composable
-fun SetUserHead(viewModel: UserPageViewModel,  launcher: ManagedActivityResultLauncher<String, Uri?>, navController: NavHostController) {
+fun SetUserHead(viewModel: UserPageViewModel,
+               // launcher: ManagedActivityResultLauncher<String, Uri?>,
+                navController: NavHostController) {
     Row(
         Modifier
             .fillMaxWidth()
@@ -123,7 +127,11 @@ fun SetUserHead(viewModel: UserPageViewModel,  launcher: ManagedActivityResultLa
                     .padding(10.dp)
                     .size(130.dp)
                     .clip(CircleShape)
-                    .clickable { launcher.launch("image/*") })
+                    .clickable {
+                        navController.navigate(Screen.ImageChoiceScreen.what_it_is("user_page"))
+                       // launcher.launch("image/*")
+                    }
+            )
         }
         Column(
             modifier = Modifier

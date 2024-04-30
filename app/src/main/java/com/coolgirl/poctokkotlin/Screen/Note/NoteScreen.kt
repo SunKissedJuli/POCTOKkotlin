@@ -45,7 +45,6 @@ fun NoteScreen(navController: NavHostController, noteId : Int?){
     val viewModel : NoteViewModel = viewModel()
     val coroutineScope = rememberCoroutineScope()
     var loadNotesStatus by remember { mutableStateOf(LoadNotesStatus.NOT_STARTED) }
-    if(noteId!=0){
         LaunchedEffect(loadNotesStatus) {
             if (loadNotesStatus == LoadNotesStatus.NOT_STARTED) {
                 coroutineScope.launch() {
@@ -55,12 +54,8 @@ fun NoteScreen(navController: NavHostController, noteId : Int?){
             }
         }
         if (loadNotesStatus == LoadNotesStatus.COMPLETED) {
-            Log.d("tag", "хуй LoadNote note image = " + viewModel.noteImage)
             SetNoteScreen(navController,viewModel)
         }
-    }else{
-        SetNoteScreen(navController,viewModel)
-    }
 
 }
 
@@ -69,7 +64,7 @@ fun SetNoteScreen(navController : NavHostController, viewModel: NoteViewModel){
     Column(modifier = Modifier
         .fillMaxSize()
         .background(colorResource(R.color.stone))) {
-        SetNoteHead(navController, viewModel.GetNoteData(), viewModel, viewModel.OpenGalery())
+        SetNoteHead(navController, viewModel.GetNoteData(), viewModel)
         key(viewModel.noteImage){
             if(viewModel.noteImage!=null && !viewModel.noteImage.equals("")){
                 SetNoteImage(viewModel.noteImage, viewModel)
@@ -81,7 +76,7 @@ fun SetNoteScreen(navController : NavHostController, viewModel: NoteViewModel){
 }
 
 @Composable
-fun SetNoteHead(navController: NavHostController, noteData : String, viewModel: NoteViewModel,  launcher: ManagedActivityResultLauncher<String, Uri?>){
+fun SetNoteHead(navController: NavHostController, noteData : String, viewModel: NoteViewModel){
     Row(modifier = Modifier
         .fillMaxWidth()
         .fillMaxHeight(0.1f)
@@ -90,7 +85,7 @@ fun SetNoteHead(navController: NavHostController, noteData : String, viewModel: 
     horizontalArrangement = Arrangement.SpaceAround){
         Text(text = "←", fontSize = 50.sp, color = colorResource(R.color.brown), modifier = Modifier.clickable {viewModel.SaveNote(navController) })
         Text(text = noteData, color = colorResource(R.color.brown), fontSize = 18.sp)
-        Button(onClick = { launcher.launch("image/*") },
+        Button(onClick = { navController.navigate(Screen.ImageChoiceScreen.what_it_is("note")) },
             shape = RoundedCornerShape(35.dp),
             modifier = Modifier
                 .size(50.dp)
@@ -139,14 +134,7 @@ fun SetNoteBody(viewModel: NoteViewModel){
 @Composable
 fun SetNoteBottom(viewModel: NoteViewModel){
     val items = viewModel.GetSpinnerData()
-    Log.d("tag", " хуй selectedItem = viewModel.GetSelectedType(items) = " + viewModel.GetSelectedType(items))
-    var vool : Boolean = viewModel.GetSelectedType(items)<=items.size
-    Log.d("tag", " хуй selectedItem = items.size = " + items.size)
-    Log.d("tag", " хуй selectedItem = viewModel.GetSelectedType(items)<=items.size = " + vool)
-
     if(viewModel.GetSelectedType(items)<=items.size){
-        Log.d("tag", " хуй selectedItem = items[viewModel.GetSelectedType(items)].Name = " + items[viewModel.GetSelectedType(items)].Name)
-
         Row(modifier = Modifier.fillMaxSize()) {
             SpinnerSample(
                 items = items,

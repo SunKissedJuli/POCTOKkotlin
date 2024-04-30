@@ -7,6 +7,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.coolgirl.poctokkotlin.Screen.AddPlant.AddPlantScreen
+import com.coolgirl.poctokkotlin.Screen.ImageChoice.ImageChoiceScreen
 import com.coolgirl.poctokkotlin.Screen.Login.LoginScreen
 import com.coolgirl.poctokkotlin.Screen.Note.NoteScreen
 import com.coolgirl.poctokkotlin.Screen.PlantPage.PlantPageScreen
@@ -60,6 +61,14 @@ fun AppNavHost(
 
         composable(Screen.AddPlant.route){
             AddPlantScreen(navController)
+        }
+
+        composable(Screen.ImageChoiceScreen.route,
+            arguments = listOf(navArgument("what_it_is"){
+                type = NavType.StringType
+            })){
+            val what_it_is : String = it.arguments?.getString("what_it_is")!!
+            ImageChoiceScreen(navController, what_it_is)
         }
 
         composable(Screen.Settings.route){
