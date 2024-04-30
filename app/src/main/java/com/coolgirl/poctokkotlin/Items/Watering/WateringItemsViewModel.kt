@@ -62,17 +62,19 @@ class WateringItemsViewModel : ViewModel() {
 
     fun AddWatering(){
         var wateringHistory = WateringHistoryAdd(GetUser()!!.userid, GetPlant()!!.plantid, wateringDate, wateringMl.toInt())
-        var apiClient = ApiClient.start().create(ApiController::class.java)
-        val call: Call<Plant> = apiClient.postWateringHistory(wateringHistory)
-        call.enqueue(object : Callback<Plant> {
-            override fun onResponse(call: Call<Plant>, response: Response<Plant>) {
-                if(response.code()==200){
-                    response.body()?.let { SetPlant(it) }
+        if(wateringDate!=null&&!wateringDate.equals("")){
+            var apiClient = ApiClient.start().create(ApiController::class.java)
+            val call: Call<Plant> = apiClient.postWateringHistory(wateringHistory)
+            call.enqueue(object : Callback<Plant> {
+                override fun onResponse(call: Call<Plant>, response: Response<Plant>) {
+                    if(response.code()==200){
+                        response.body()?.let { SetPlant(it) }
+                    }
                 }
-            }
-            override fun onFailure(call: Call<Plant>, t: Throwable) {
-                Log.d("Tag", "Проверка plant (AddPlant) onFailure = " + t.message)
-            } })
+                override fun onFailure(call: Call<Plant>, t: Throwable) {
+                    Log.d("Tag", "Проверка plant (AddPlant) onFailure = " + t.message)
+                } })
+        }
     }
 }
 

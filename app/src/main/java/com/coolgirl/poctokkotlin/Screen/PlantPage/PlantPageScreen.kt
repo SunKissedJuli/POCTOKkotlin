@@ -188,11 +188,11 @@ fun PlantWatering(viewModel: PlantPageViewModel, wateringViewModel : WateringIte
 fun NoteList(viewModel: PlantPageViewModel, noteList: List<Notes?>?, navController: NavHostController){
     if(viewModel.WhatItIs().equals("notes")){
         var count = noteList?.size
+        if (count != null&&count!=0) {
         LazyColumn(modifier = Modifier
             .fillMaxWidth()
             .fillMaxHeight(0.85f)
             .background(colorResource(R.color.blue))){
-            if (count != null) {
                 items(count){ index ->
                     if (noteList != null) {
                         NoteItem(noteList[index]!!.notetext!!,noteList[index]!!.notedata, viewModel.plant!!.plantname, noteList[index]!!.noteid!!, navController)
@@ -202,20 +202,21 @@ fun NoteList(viewModel: PlantPageViewModel, noteList: List<Notes?>?, navControll
                     }
                 }
             }
-        }
+        }else { SetPlug(R.string.plug_note, R.string.plug_note_description, R.drawable.note_plug) }
     }
 }
 
 @Composable
 fun PhotoList(viewModel: PlantPageViewModel, photoList: List<Notes?>?, navController: NavHostController){
     if(viewModel.WhatItIs().equals("photos")){
+        if(photoList!=null&&photoList.size!=null&&photoList.size!=0){
         LazyColumn(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
                 .fillMaxHeight(0.86f)
                 .fillMaxWidth()
                 .background(colorResource(R.color.blue))) {
-            if(photoList!=null){
+
                 val columnItems : Int = ((photoList!!.size)!!.toFloat()/3).roundToInt()
                 items(columnItems) { columnIndex ->
                     LazyRow(modifier = Modifier.fillMaxWidth()) {
@@ -240,40 +241,10 @@ fun PhotoList(viewModel: PlantPageViewModel, photoList: List<Notes?>?, navContro
                     }
                 }
             }
-        }
+        }else { SetPlug(R.string.plug_photo, R.string.plug_photo_description, R.drawable.photo_plug) }
     }
 }
 
-/*@Composable
-fun HistoryList(historyList : List<WateringHistory?>?, viewModel: PlantPageViewModel){
-    val VerticalScrollConsumer = object : NestedScrollConnection {
-        override fun onPreScroll(available: Offset, source: NestedScrollSource) = available.copy(x = 0f)
-        override suspend fun onPreFling(available: Velocity) = available.copy(x = 0f)
-    }
-    val HorizontalScrollConsumer = object : NestedScrollConnection {
-        override fun onPreScroll(available: Offset, source: NestedScrollSource) = available.copy(y = 0f)
-        override suspend fun onPreFling(available: Velocity) = available.copy(y = 0f)
-    }
-    fun Modifier.disabledVerticalPointerInputScroll(disabled: Boolean = true) =
-        if (disabled) this.nestedScroll(VerticalScrollConsumer) else this
-    fun Modifier.disabledHorizontalPointerInputScroll(disabled: Boolean = true) =
-        if (disabled) this.nestedScroll(HorizontalScrollConsumer) else this
-    var count = historyList?.size
-    LazyColumn(modifier = Modifier
-        .fillMaxSize()
-        .background(colorResource(R.color.blue)).disabledVerticalPointerInputScroll()){
-        if (count != null) {
-            items(count){ index ->
-                if (noteList != null) {
-                    HistoryItem(GetPlant()!!.plantname, historyList?.get(index)!!.date, historyList[index]!!.countofmililiters.toString())
-                    Row(modifier = Modifier
-                        .fillMaxWidth()
-                        .height(20.dp)){}
-                }
-            }
-        }
-    }
-}*/
 
 @Composable
 fun HistoryList(historyList : List<WateringHistory?>?, viewModel: PlantPageViewModel){

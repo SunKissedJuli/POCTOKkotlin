@@ -31,10 +31,12 @@ class WateringPageViewModel : ViewModel() {
     }
 
     fun GetPlantName(plantId : Int) : String?{
-        for(item in GetUser()!!.plants!!){
-            if(item!=null){
-                if(item.plantid==plantId){
-                    return item.plantname
+        if(GetUser()!!.plants!=null){
+            for(item in GetUser()!!.plants!!){
+                if(item!=null){
+                    if(item.plantid==plantId){
+                        return item.plantname
+                    }
                 }
             }
         }

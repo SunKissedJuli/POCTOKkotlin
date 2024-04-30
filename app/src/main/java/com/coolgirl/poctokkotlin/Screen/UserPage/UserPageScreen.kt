@@ -129,7 +129,7 @@ fun SetUserHead(viewModel: UserPageViewModel,
                     .clip(CircleShape)
                     .clickable {
                         navController.navigate(Screen.ImageChoiceScreen.what_it_is("user_page"))
-                       // launcher.launch("image/*")
+                        // launcher.launch("image/*")
                     }
             )
         }
@@ -150,14 +150,16 @@ fun SetUserHead(viewModel: UserPageViewModel,
                     modifier = Modifier
                         .padding(end = 10.dp)
                         .size(30.dp)
-                        .clickable {navController.navigate(Screen.Settings.route) })
+                        .clickable { navController.navigate(Screen.Settings.route) })
             }
              viewModel.user?.userdescription?.let {
                  Text(text = it, softWrap = true, color = colorResource(R.color.brown), modifier = Modifier.padding(end = 10.dp, top=20.dp)) }
 
             Button(
                 onClick = { /*TODO*/ },
-                modifier = Modifier.fillMaxWidth(0.7f).padding(top=20.dp),
+                modifier = Modifier
+                    .fillMaxWidth(0.7f)
+                    .padding(top = 20.dp),
                 colors = ButtonDefaults.buttonColors(colorResource(R.color.stone)))
             { Text(text = stringResource(R.string.user_head_change), color = colorResource(R.color.brown), fontSize = 13.sp) }
 
@@ -188,11 +190,12 @@ fun SetButtonHead(viewModel: UserPageViewModel) {
 fun NoteList(viewModel: UserPageViewModel, noteList: List<Notes?>?, navController: NavHostController){
         if(viewModel.WhatItIs().equals("notes")){
             var count = noteList?.size
+            if (count != null&&count!=0) {
             LazyColumn(modifier = Modifier
                 .fillMaxWidth()
                 .fillMaxHeight(0.85f)
                 .background(colorResource(R.color.blue))){
-                if (count != null) {
+
                     items(count){ index ->
                         if (noteList != null) {
                             NoteItem(noteList[index]!!.notetext!!,noteList[index]!!.notedata, viewModel.GetPlantName(noteList[index]!!.plantid!!),noteList[index]!!.noteid!!, navController)
@@ -202,15 +205,15 @@ fun NoteList(viewModel: UserPageViewModel, noteList: List<Notes?>?, navControlle
                         }
                     }
                 }
-            }
+            }else { SetPlug(R.string.plug_note, R.string.plug_note_description, R.drawable.note_plug) }
         }
 }
 
 @Composable
-fun PhotoList(viewModel: UserPageViewModel, noteList: List<Notes?>?, navController: NavHostController){
+fun PhotoList(viewModel: UserPageViewModel, photoList: List<Notes?>?, navController: NavHostController){
     if(viewModel.WhatItIs().equals("photos")){
-        if(noteList!=null){
-            val columnItems : Int = ((noteList!!.size)!!.toFloat()/3).roundToInt()
+        if(photoList!=null&&photoList.size!=null&&photoList.size!=0){
+            val columnItems : Int = ((photoList!!.size)!!.toFloat()/3).roundToInt()
             LazyColumn(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier
@@ -219,7 +222,7 @@ fun PhotoList(viewModel: UserPageViewModel, noteList: List<Notes?>?, navControll
                     .background(colorResource(R.color.blue))) {
                 items(columnItems) { columnIndex ->
                     LazyRow(modifier = Modifier.fillMaxWidth()) {
-                        val count = when (noteList.size - columnIndex * 3) {
+                        val count = when (photoList.size - columnIndex * 3) {
                             1 -> 1
                             2 -> 2
                             else -> 3
@@ -227,40 +230,39 @@ fun PhotoList(viewModel: UserPageViewModel, noteList: List<Notes?>?, navControll
                         items(count) { rowIndex ->
                             val currentIndex = columnIndex * 3 + rowIndex
                             Image(
-                                painter = rememberImagePainter("http://45.154.1.94" + (noteList[currentIndex]!!.image)),
+                                painter = rememberImagePainter("http://45.154.1.94" + (photoList[currentIndex]!!.image)),
                                 contentDescription = "image",
                                 contentScale = ContentScale.Crop,
                                 modifier = Modifier
                                     .padding(2.dp)
                                     .size(116.dp)
-                                    .clickable { navController.navigate(Screen.Note.note_id(noteList[currentIndex]!!.noteid)) })
+                                    .clickable { navController.navigate(Screen.Note.note_id(photoList[currentIndex]!!.noteid)) })
                         }
                     }
                 }
             }
-        }
+        }else { SetPlug(R.string.plug_photo, R.string.plug_photo_description, R.drawable.photo_plug) }
     }
 }
 
 @Composable
 fun PlantList(viewModel: UserPageViewModel, plantList: List<Plant?>?, navController: NavHostController){
-        if(viewModel.WhatItIs().equals("plants")){
+        if(viewModel.WhatItIs().equals("plants")) {
             var count = plantList?.size
-            LazyColumn(modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxHeight(0.85f)
-                .background(colorResource(R.color.blue))){
-                if (count != null) {
-                    items(count){ index ->
+            if (count != null&&count!=0) {
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .fillMaxHeight(0.85f)
+                        .background(colorResource(R.color.blue))) {
+                    items(count) { index ->
                         if (plantList != null) {
-                           PlantItem(plantList[index]!!.plantname,plantList[index]!!.plantdescription,plantList[index]!!.plantimage, plantList[index]!!.plantid, navController)
-                            Row(modifier = Modifier
-                                .fillMaxWidth()
-                                .height(20.dp)){}
+                            PlantItem(plantList[index]!!.plantname, plantList[index]!!.plantdescription, plantList[index]!!.plantimage, plantList[index]!!.plantid, navController)
+                            Row(modifier = Modifier.fillMaxWidth().height(20.dp)) {}
                         }
                     }
                 }
-            }
+            } else { SetPlug(R.string.plug_plants, R.string.plug_plants_description, R.drawable.plant_plug) }
         }
 }
 
