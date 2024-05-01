@@ -18,3 +18,5 @@ fun EncodeImage(filePath: String): String {
     val base64Image = Base64.encodeToString(imageBytes, Base64.DEFAULT)
     return  base64Image
 }
+
+

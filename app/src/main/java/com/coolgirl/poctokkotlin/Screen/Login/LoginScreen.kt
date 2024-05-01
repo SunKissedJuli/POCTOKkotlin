@@ -23,43 +23,34 @@ import com.coolgirl.poctokkotlin.R
 @Composable
 fun LoginScreen(navController: NavController) {
     val viewModel: LoginViewModel = viewModel()
+    viewModel.LoadData()
     SetLoginScreen(navController, viewModel)
 }
 
 @Composable
 fun SetLoginScreen(navController: NavController, viewModel: LoginViewModel){
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(colorResource(R.color.blue)),
+    Column(modifier = Modifier
+        .fillMaxSize()
+        .background(colorResource(R.color.blue)),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxHeight(0.73f),
+        verticalArrangement = Arrangement.Center) {
+        Column(modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight(0.73f),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Bottom
-        ) {
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth(0.85f)
-                    .fillMaxHeight(0.88f),
-                shape = RoundedCornerShape(55.dp)
-            ) {
-                Box(
-                    modifier = Modifier
+            verticalArrangement = Arrangement.Bottom) {
+            Card(modifier = Modifier
+                .fillMaxWidth(0.85f)
+                .fillMaxHeight(0.88f),
+                shape = RoundedCornerShape(55.dp)) {
+                Box(modifier = Modifier
+                    .fillMaxSize()
+                    .background(colorResource(R.color.white)),) {
+                    Column(modifier = Modifier
                         .fillMaxSize()
-                        .background(colorResource(R.color.white)),
-                ) {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(30.dp),
+                        .padding(30.dp),
                         horizontalAlignment = Alignment.Start,
-                        verticalArrangement = Arrangement.SpaceEvenly,
-                    ) {
+                        verticalArrangement = Arrangement.SpaceEvenly,) {
                         SetRegistrationPage(navController, viewModel)
                     }
                 }
@@ -73,8 +64,8 @@ fun SetLoginScreen(navController: NavController, viewModel: LoginViewModel){
 @Composable
 fun SetRegistrationPage(navController: NavController, viewModel: LoginViewModel){
     key(viewModel.change){
-        Row(
-            modifier = Modifier.fillMaxWidth(),
+        Row(modifier = Modifier
+            .fillMaxWidth(),
             horizontalArrangement = Arrangement.Center){
             Text(text = stringResource(id = viewModel.GetHeadText()), fontSize = 28.sp, color = colorResource(R.color.brown))
         }
@@ -112,9 +103,13 @@ fun SetRegistrationPage(navController: NavController, viewModel: LoginViewModel)
                         innerTextField() }
                 })
         }
-        Column(
-            modifier = Modifier.fillMaxWidth(),
+        Column(modifier = Modifier
+            .fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally){
+            if(viewModel.error){
+                Text(text = stringResource(viewModel.GetErrorMessage()), color = colorResource(R.color.red), fontSize = 15.sp)
+            }
+
             Button(onClick = { viewModel.AutorizeClient(navController) },
                 modifier = Modifier
                     .padding(top = 20.dp)
@@ -130,10 +125,7 @@ fun SetRegistrationPage(navController: NavController, viewModel: LoginViewModel)
 @Composable
 fun SetLoginButton(viewModel: LoginViewModel){
     key(viewModel.change){
-        Button(onClick =
-        {
-            viewModel.ChangeScreen()
-        },
+        Button(onClick = { viewModel.ChangeScreen() },
         modifier = Modifier
             .padding(top = 20.dp)
             .fillMaxWidth(0.65f),

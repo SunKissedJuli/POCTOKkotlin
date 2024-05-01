@@ -36,8 +36,8 @@ import kotlinx.coroutines.launch
 
 private val fileName = mutableStateOf(0)
 @OptIn(ExperimentalMaterialApi::class)
-var sheetState: ModalBottomSheetState? = null
-var scope: CoroutineScope? = null
+private var sheetState: ModalBottomSheetState? = null
+private var scope: CoroutineScope? = null
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable

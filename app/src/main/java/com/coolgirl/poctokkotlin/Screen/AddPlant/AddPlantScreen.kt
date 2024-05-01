@@ -33,11 +33,13 @@ import com.coolgirl.poctokkotlin.Common.DecodeImage
 import com.coolgirl.poctokkotlin.Items.Shedule
 import com.coolgirl.poctokkotlin.Items.Watering.WateringItemsViewModel
 import com.coolgirl.poctokkotlin.R
-import com.coolgirl.poctokkotlin.Screen.scope
-import com.coolgirl.poctokkotlin.Screen.sheetState
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 private val fileName = mutableStateOf(0)
+@OptIn(ExperimentalMaterialApi::class)
+private var sheetState: ModalBottomSheetState? = null
+private var scope: CoroutineScope? = null
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable

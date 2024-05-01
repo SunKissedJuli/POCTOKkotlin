@@ -6,6 +6,8 @@
     <string name="login_autorization">АВТОРИЗАЦИЯ</string>
     <string name="login_button_registration">ЗАРЕГИСТРИРОВАТЬСЯ</string>
     <string name="login_button_autorization">ВОЙТИ</string>
+    <string name="login_error_no_data">Заполните все поля!</string>
+    <string name="login_error_password_mismatch">Введите одинаковые пароли!</string>
     <string name="user_page_go">ПЕРЕЙТИ</string>
     <string name="button_head_shedule">ПОЛИВ</string>
     <string name="button_head_photo">ФОТО</string>

@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.database.Cursor
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.provider.OpenableColumns
 import androidx.activity.compose.ManagedActivityResultLauncher
@@ -12,9 +13,11 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
+import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import com.coolgirl.poctokkotlin.Common.EncodeImage
 import com.coolgirl.poctokkotlin.Common.RandomString
+import com.coolgirl.poctokkotlin.Common.getResourceNameFromDrawableString
 import com.coolgirl.poctokkotlin.GetNote
 import com.coolgirl.poctokkotlin.GetUser
 import com.coolgirl.poctokkotlin.Models.UserLoginDataResponse
@@ -73,7 +76,6 @@ class ImageChoiceViewModel : ViewModel() {
                                 }
                             }
                         }
-
                     }
                 }
 
@@ -115,6 +117,43 @@ class ImageChoiceViewModel : ViewModel() {
             override fun onFailure(call: Call<UserLoginDataResponse>, t: Throwable) {
                 //дописать
             } })
+    }
+
+    @Composable
+    fun GetFileFromDrawable(image: Int, navController : NavHostController) {
+        if (image != 0) {
+            val context = LocalContext.current
+            val coroutineScope = rememberCoroutineScope()
+            var file by remember { mutableStateOf<File?>(null) }
+            val bitmap = BitmapFactory.decodeResource(context.resources, image)
+
+            coroutineScope.launch {
+                val extStorageDirectory = context.cacheDir
+                val name = getResourceNameFromDrawableString(image.toString()) + ".JPEG"
+                val outputFile = File(extStorageDirectory, name)
+                FileOutputStream(outputFile).use { outStream ->
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outStream)
+                }
+                file = Compressor.compress(context, outputFile) {
+                    default(width = 50, format = Bitmap.CompressFormat.JPEG)
+                }
+                var image = EncodeImage(file!!.path)
+                when(whatItIs){
+                    "note" ->{ var note = GetNote()
+                        if(image!=null){
+                            note!!.image = image
+                            SetNote(note) }
+                        navController.navigate(Screen.Note.note_id(note!!.noteid))
+                    }
+                    "user_page" ->{
+                        PutUserImage(image!!)
+                        if(go!=null&&!go.equals("")){
+                            navController.navigate(Screen.UserPage.user_id(GetUser()!!.userid))
+                        }
+                    }
+                }
+            }
+        }
     }
 
 }

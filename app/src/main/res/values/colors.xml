@@ -12,4 +12,5 @@
     <color name="green">#00FFA1</color> //60be7a #00FFA1
     <color name="gray">#7f000000</color>
     <color name="stone">#E8F7F5</color>
+    <color name="red">#671515</color>
 </resources>

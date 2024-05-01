@@ -83,9 +83,7 @@ fun SetUserPage(navController: NavHostController, viewModel: UserPageViewModel){
                 modifier = Modifier
                     .fillMaxSize()
                     .background(colorResource(R.color.stone))) {
-                SetUserHead(viewModel,
-                 //   viewModel.OpenGalery(),
-                    navController)
+                SetUserHead(viewModel, navController)
                 SetButtonHead(viewModel)
                 key(viewModel.change){
                     when (viewModel.WhatItIs()) {
@@ -102,9 +100,7 @@ fun SetUserPage(navController: NavHostController, viewModel: UserPageViewModel){
 }
 
 @Composable
-fun SetUserHead(viewModel: UserPageViewModel,
-               // launcher: ManagedActivityResultLauncher<String, Uri?>,
-                navController: NavHostController) {
+fun SetUserHead(viewModel: UserPageViewModel, navController: NavHostController) {
     Row(
         Modifier
             .fillMaxWidth()

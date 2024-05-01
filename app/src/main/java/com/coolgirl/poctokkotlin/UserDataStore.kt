@@ -35,7 +35,12 @@ fun SetLoginData(newUser: UserLoginDataResponse) {
                 set(UserScheme.PASSWORD, newUser.userpassword.toString())
                 set(UserScheme.EMAIL, newUser.userlogin.toString())
                 set(UserScheme.ID, newUser.userid)
-                set(UserScheme.IS_AUTORIZE,true)
+                if(newUser.userlogin==null){
+                    set(UserScheme.IS_AUTORIZE,false)
+                }else{
+                    set(UserScheme.IS_AUTORIZE,true)
+                }
+
             }
         }
     }

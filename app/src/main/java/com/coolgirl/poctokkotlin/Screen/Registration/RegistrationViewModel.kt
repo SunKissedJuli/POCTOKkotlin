@@ -10,6 +10,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
 import com.coolgirl.poctokkotlin.Common.EncodeImage
+import com.coolgirl.poctokkotlin.Common.getResourceNameFromDrawableString
 import com.coolgirl.poctokkotlin.GetUser
 import com.coolgirl.poctokkotlin.Models.UserLoginDataResponse
 import com.coolgirl.poctokkotlin.SetLoginData
@@ -80,15 +81,6 @@ class RegistrationViewModel : ViewModel() {
                 }
                 userImage = EncodeImage(file!!.path)
             }
-        }
-    }
-
-    fun getResourceNameFromDrawableString(drawableString: String): String {
-        val parts = drawableString.split(".")
-        return if (parts.size == 3 && parts[0] == "R" && parts[1] == "drawable") {
-            parts[2]
-        } else {
-            ""
         }
     }
 }

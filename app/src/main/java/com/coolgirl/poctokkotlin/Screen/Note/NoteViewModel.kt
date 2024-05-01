@@ -78,11 +78,13 @@ class NoteViewModel : ViewModel() {
     fun GetSpinnerData() : List<SpinnerItems>{
         val spinnerList = mutableListOf<SpinnerItems>()
         spinnerList.add(SpinnerItems(0, "Общая"))
-        if(GetUser()!!.plants!!!=null){
-            for(item in GetUser()!!.plants!!){
-                val spinnerItem = item?.plantid?.let { item.plantname?.let { it1 ->
-                    SpinnerItems(it, it1) } }
-                spinnerList.add(spinnerItem!!)
+        if(GetUser()!=null){
+            if(GetUser()!!.plants!=null){
+                for(item in GetUser()!!.plants!!){
+                    val spinnerItem = item?.plantid?.let { item.plantname?.let { it1 ->
+                        SpinnerItems(it, it1) } }
+                    spinnerList.add(spinnerItem!!)
+                }
             }
         }
         return spinnerList
