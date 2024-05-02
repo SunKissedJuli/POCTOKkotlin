@@ -37,16 +37,10 @@ fun GetUserFor() : UserLoginDataResponse{
     return user
 }
 
-fun SetNote(newNote : Notes){
-    note = newNote
-}
+fun SetNote(newNote : Notes){ note = newNote }
 
-fun GetNote(): Notes? {
-    return note
-}
+fun GetNote(): Notes? { return note }
 
-fun RemoveNote(){
-    note = null
-}
+fun RemoveNote(){ note = null }
 
 

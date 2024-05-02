@@ -20,11 +20,10 @@ import retrofit2.Response
 class PlantPageViewModel : ViewModel() {
     var plant : Plant? = null
     var change by mutableStateOf("")
+    var dataLoaded by mutableStateOf("")
     private var whatItIs = "notes"
 
-    fun WhatItIs() : String{
-        return whatItIs
-    }
+    fun WhatItIs() : String{ return whatItIs }
 
     fun ShowNotes(){
         whatItIs = "notes"
@@ -46,7 +45,7 @@ class PlantPageViewModel : ViewModel() {
             var allNotesList :List<Notes?>? = GetUser()?.notes
             var noteList : MutableList<Notes>? = mutableListOf()
             for(note in allNotesList.orEmpty()){
-                if(note!!.plantid==plant?.plantid){
+                if(note!!.plantid==plant?.plantid&&note.image==null){
                     noteList?.add(note!!)
                 }
             }
@@ -88,7 +87,9 @@ class PlantPageViewModel : ViewModel() {
                 if(response.code()==200){
                     plant = response.body()
                     plant?.let { SetPlant(it) }
+                    dataLoaded = RandomString()
                     change = RandomString()
+
                 }
             }
             override fun onFailure(call: Call<Plant>, t: Throwable) {

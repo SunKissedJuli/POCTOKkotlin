@@ -62,12 +62,13 @@ fun PlantPageScreen(navController: NavHostController, plantId : Int) {
             }
         }
     }
-
-    if (loadNotesStatus == LoadNotesStatus.COMPLETED) {
-        noteList = viewModel.GetNotes()
-        photoList = viewModel.GetPhotos()
-        historyList = viewModel.GetHistoryList()
-        SetPlantPage(navController, viewModel, wateringViewModel)
+    key(viewModel.dataLoaded) {
+        if (loadNotesStatus == LoadNotesStatus.COMPLETED) {
+            noteList = viewModel.GetNotes()
+            photoList = viewModel.GetPhotos()
+            historyList = viewModel.GetHistoryList()
+            SetPlantPage(navController, viewModel, wateringViewModel)
+        }
     }
 }
 
@@ -207,21 +208,23 @@ fun NoteList(viewModel: PlantPageViewModel, noteList: List<Notes?>?, navControll
 }
 
 @Composable
-fun PhotoList(viewModel: PlantPageViewModel, photoList: List<Notes?>?, navController: NavHostController){
-    if(viewModel.WhatItIs().equals("photos")){
-        if(photoList!=null&&photoList.size!=null&&photoList.size!=0){
-        LazyColumn(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier
-                .fillMaxHeight(0.86f)
-                .fillMaxWidth()
-                .background(colorResource(R.color.blue))) {
-
-                val columnItems : Int = ((photoList!!.size)!!.toFloat()/3).roundToInt()
+fun PhotoList(viewModel: PlantPageViewModel, photoList: List<Notes?>?, navController: NavHostController) {
+    if (viewModel.WhatItIs().equals("photos")) {
+        if (photoList != null && photoList.isNotEmpty()) {
+            val columnItems: Int = ((photoList.size).toFloat() / 3).roundToInt()+1
+            Log.d("tag", "хуй columnItems = " + columnItems)
+            LazyColumn(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier
+                    .fillMaxHeight(0.86f)
+                    .fillMaxWidth()
+                    .background(colorResource(R.color.blue))
+            ) {
                 items(columnItems) { columnIndex ->
-                    LazyRow(modifier = Modifier.fillMaxWidth()) {
-                        val count = min(3, photoList.size - columnIndex * 3).coerceIn(1, 3)
-                        items(count) { rowIndex ->
+                    Log.d("tag", "хуй columnIndex = " + columnIndex)
+                    Row(modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Start) {
+                        for (rowIndex in 0 until min(3, photoList.size - columnIndex * 3)) {
                             val currentIndex = columnIndex * 3 + rowIndex
                             Image(
                                 painter = rememberImagePainter("http://45.154.1.94" + (photoList[currentIndex]!!.image)),
@@ -230,21 +233,16 @@ fun PhotoList(viewModel: PlantPageViewModel, photoList: List<Notes?>?, navContro
                                 modifier = Modifier
                                     .padding(2.dp)
                                     .size(116.dp)
-                                    .clickable {
-                                        navController.navigate(
-                                            Screen.Note.note_id(
-                                                photoList[currentIndex]!!.noteid
-                                            )
-                                        )
-                                    })
+                                    .clickable { navController.navigate(Screen.Note.note_id(photoList[currentIndex]!!.noteid)) })
                         }
                     }
                 }
             }
-        }else { SetPlug(R.string.plug_photo, R.string.plug_photo_description, R.drawable.photo_plug) }
+        } else {
+            SetPlug(R.string.plug_photo, R.string.plug_photo_description, R.drawable.photo_plug)
+        }
     }
 }
-
 
 @Composable
 fun HistoryList(historyList : List<WateringHistory?>?, viewModel: PlantPageViewModel){

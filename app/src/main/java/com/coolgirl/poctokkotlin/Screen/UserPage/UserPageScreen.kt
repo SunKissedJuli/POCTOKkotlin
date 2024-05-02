@@ -2,6 +2,7 @@ package com.coolgirl.poctokkotlin.Screen.UserPage
 
 import android.annotation.SuppressLint
 import android.net.Uri
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -123,25 +124,19 @@ fun SetUserHead(viewModel: UserPageViewModel, navController: NavHostController) 
                     .padding(10.dp)
                     .size(130.dp)
                     .clip(CircleShape)
-                    .clickable {
-                        navController.navigate(Screen.ImageChoiceScreen.what_it_is("user_page"))
-                        // launcher.launch("image/*")
-                    }
-            )
+                    .clickable { navController.navigate(Screen.ImageChoiceScreen.what_it_is("user_page")) })
         }
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .fillMaxHeight()
                 .padding(25.dp, 10.dp, 0.dp, 0.dp),
-            verticalArrangement = Arrangement.Top
-        ) {
+            verticalArrangement = Arrangement.Top) {
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.Top){
                 viewModel.user?.username?.let {
                     Text(text = it, fontWeight = FontWeight.Bold, fontSize = 16.sp, color = colorResource(R.color.brown),
                         modifier = Modifier.padding(top=35.dp)) }
-                Image(
-                    painter = painterResource(R.drawable.settings),
+                Image(painter = painterResource(R.drawable.settings),
                     contentDescription = "settings",
                     modifier = Modifier
                         .padding(end = 10.dp)
@@ -151,14 +146,12 @@ fun SetUserHead(viewModel: UserPageViewModel, navController: NavHostController) 
              viewModel.user?.userdescription?.let {
                  Text(text = it, softWrap = true, color = colorResource(R.color.brown), modifier = Modifier.padding(end = 10.dp, top=20.dp)) }
 
-            Button(
-                onClick = { /*TODO*/ },
+            Button(onClick = { /*TODO*/ },
                 modifier = Modifier
                     .fillMaxWidth(0.7f)
                     .padding(top = 20.dp),
                 colors = ButtonDefaults.buttonColors(colorResource(R.color.stone)))
             { Text(text = stringResource(R.string.user_head_change), color = colorResource(R.color.brown), fontSize = 13.sp) }
-
         }
     }
 }
@@ -205,7 +198,7 @@ fun NoteList(viewModel: UserPageViewModel, noteList: List<Notes?>?, navControlle
         }
 }
 
-@Composable
+/*@Composable
 fun PhotoList(viewModel: UserPageViewModel, photoList: List<Notes?>?, navController: NavHostController){
     if(viewModel.WhatItIs().equals("photos")){
         if(photoList!=null&&photoList.size!=null&&photoList.size!=0){
@@ -238,6 +231,44 @@ fun PhotoList(viewModel: UserPageViewModel, photoList: List<Notes?>?, navControl
                 }
             }
         }else { SetPlug(R.string.plug_photo, R.string.plug_photo_description, R.drawable.photo_plug) }
+    }
+}
+*/
+
+@Composable
+fun PhotoList(viewModel: UserPageViewModel, photoList: List<Notes?>?, navController: NavHostController) {
+    if (viewModel.WhatItIs().equals("photos")) {
+        if (photoList != null && photoList.isNotEmpty()) {
+            val columnItems: Int = ((photoList.size).toFloat() / 3).roundToInt()+1
+            Log.d("tag", "хуй columnItems = " + columnItems)
+            LazyColumn(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier
+                    .fillMaxHeight(0.86f)
+                    .fillMaxWidth()
+                    .background(colorResource(R.color.blue))
+            ) {
+                items(columnItems) { columnIndex ->
+                    Log.d("tag", "хуй columnIndex = " + columnIndex)
+                    Row(modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Start) {
+                        for (rowIndex in 0 until min(3, photoList.size - columnIndex * 3)) {
+                            val currentIndex = columnIndex * 3 + rowIndex
+                            Image(
+                                painter = rememberImagePainter("http://45.154.1.94" + (photoList[currentIndex]!!.image)),
+                                contentDescription = "image",
+                                contentScale = ContentScale.Crop,
+                                modifier = Modifier
+                                    .padding(2.dp)
+                                    .size(116.dp)
+                                    .clickable { navController.navigate(Screen.Note.note_id(photoList[currentIndex]!!.noteid)) })
+                        }
+                    }
+                }
+            }
+        } else {
+            SetPlug(R.string.plug_photo, R.string.plug_photo_description, R.drawable.photo_plug)
+        }
     }
 }
 
