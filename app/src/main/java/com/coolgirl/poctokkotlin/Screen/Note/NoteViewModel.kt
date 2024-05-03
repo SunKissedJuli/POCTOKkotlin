@@ -1,34 +1,17 @@
 package com.coolgirl.poctokkotlin.Screen.Note
 
-import android.annotation.SuppressLint
-import android.content.Context
-import android.database.Cursor
-import android.graphics.Bitmap
-import android.net.Uri
-import android.provider.OpenableColumns
 import android.util.Log
-import androidx.activity.compose.ManagedActivityResultLauncher
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.*
-import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
 import com.coolgirl.poctokkotlin.*
-import com.coolgirl.poctokkotlin.Common.EncodeImage
 import com.coolgirl.poctokkotlin.Models.Notes
-import com.coolgirl.poctokkotlin.api.ApiClient
+import com.coolgirl.poctokkotlin.Common.di.ApiClient
 import com.coolgirl.poctokkotlin.api.ApiController
 import com.coolgirl.poctokkotlin.navigate.Screen
-import id.zelory.compressor.Compressor
-import id.zelory.compressor.constraint.default
-import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.io.File
-import java.io.FileOutputStream
-import java.io.InputStream
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -123,9 +106,7 @@ class NoteViewModel : ViewModel() {
                 user.plants = null
             }
             note = Notes(GetUser()!!.userid, noteType, noteImage, noteText, noteId, GetNoteData(), user)
-
-            var apiClient = ApiClient.start().create(ApiController::class.java)
-            val call1: Call<Notes> = apiClient.postNote(note)
+            val call1: Call<Notes> = ApiClient().postNote(note)
             call1.enqueue(object : Callback<Notes?> {
                 override fun onResponse(call1: Call<Notes?>, response: Response<Notes?>) {
                     if(response.code()==200){

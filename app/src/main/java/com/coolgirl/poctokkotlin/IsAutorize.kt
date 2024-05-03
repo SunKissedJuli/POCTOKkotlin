@@ -1,19 +1,12 @@
 package com.coolgirl.poctokkotlin
 
-import android.util.Log
 import androidx.compose.runtime.*
 import androidx.datastore.preferences.Preferences
 import androidx.navigation.compose.rememberNavController
-import com.coolgirl.poctokkotlin.Common.RandomString
 import com.coolgirl.poctokkotlin.Models.UserLoginDataResponse
-import com.coolgirl.poctokkotlin.api.ApiClient
-import com.coolgirl.poctokkotlin.api.ApiController
 import com.coolgirl.poctokkotlin.navigate.AppNavHost
 import com.coolgirl.poctokkotlin.navigate.Screen
 import kotlinx.coroutines.launch
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
 private var change by mutableStateOf("")
 

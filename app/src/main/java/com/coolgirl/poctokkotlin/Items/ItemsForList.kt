@@ -118,7 +118,7 @@ fun HistoryItem(plantName : String?, data : String?, ml : String?){
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.padding(top = 7.dp, start = 10.dp))
-                Text(text = (stringResource(R.string.small_watering) + " " + plantName!!),
+                Text(text = (stringResource(R.string.small_watering) + " " + plantName.let{it}),
                     color = colorResource(R.color.brown),
                     fontSize = 18.sp,
                     modifier = Modifier.padding(start = 10.dp))

@@ -3,14 +3,10 @@ package com.coolgirl.poctokkotlin.Items.Watering
 import android.util.Log
 import androidx.compose.runtime.*
 import androidx.lifecycle.ViewModel
-import androidx.navigation.NavController
 import com.coolgirl.poctokkotlin.*
-import com.coolgirl.poctokkotlin.Common.RandomString
 import com.coolgirl.poctokkotlin.Models.*
-import com.coolgirl.poctokkotlin.Screen.UserPage.PlantList
-import com.coolgirl.poctokkotlin.api.ApiClient
+import com.coolgirl.poctokkotlin.Common.di.ApiClient
 import com.coolgirl.poctokkotlin.api.ApiController
-import com.coolgirl.poctokkotlin.navigate.Screen
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -47,8 +43,9 @@ class WateringItemsViewModel : ViewModel() {
 
     fun UpdateShedule(plantId: Int){
         var wateringShedule = WateringScheduleAdd(plantId, GetUser()!!.userid, shedule)
-        var apiClient = ApiClient.start().create(ApiController::class.java)
-        val call: Call<Plant> = apiClient.postWateringShedule(wateringShedule)
+       // var apiClient = ApiClient.start().create(ApiController::class.java)
+      //  val call: Call<Plant> = apiClient.postWateringShedule(wateringShedule)
+        val call: Call<Plant> = ApiClient().postWateringShedule(wateringShedule)
         call.enqueue(object : Callback<Plant> {
             override fun onResponse(call: Call<Plant>, response: Response<Plant>) {
                    if(response.code()==200){
@@ -63,8 +60,7 @@ class WateringItemsViewModel : ViewModel() {
     fun AddWatering(){
         var wateringHistory = WateringHistoryAdd(GetUser()!!.userid, GetPlant()!!.plantid, wateringDate, wateringMl.toInt())
         if(wateringDate!=null&&!wateringDate.equals("")){
-            var apiClient = ApiClient.start().create(ApiController::class.java)
-            val call: Call<Plant> = apiClient.postWateringHistory(wateringHistory)
+            val call: Call<Plant> = ApiClient().postWateringHistory(wateringHistory)
             call.enqueue(object : Callback<Plant> {
                 override fun onResponse(call: Call<Plant>, response: Response<Plant>) {
                     if(response.code()==200){

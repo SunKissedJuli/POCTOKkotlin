@@ -82,8 +82,10 @@ fun SetWateringPageScreen(viewModel: WateringPageViewModel, navController: NavHo
                     .verticalScroll(scrollState)
                     .background(colorResource(R.color.blue)),
                 verticalArrangement = Arrangement.Top) {
-                    ExpandableCard("Графики полива", viewModel)
-                    ExpandableCard("Истории полива", viewModel)
+                    key(viewModel.DataLoaded) {
+                        ExpandableCard("Графики полива", viewModel)
+                        ExpandableCard("Истории полива", viewModel)
+                    }
                 }
                 BottomSheet(navController, GetUser()!!.userid, scope, sheetState)
             }

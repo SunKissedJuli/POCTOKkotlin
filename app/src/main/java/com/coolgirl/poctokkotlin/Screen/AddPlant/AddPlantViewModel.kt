@@ -10,7 +10,8 @@ import com.coolgirl.poctokkotlin.*
 import com.coolgirl.poctokkotlin.Common.EncodeImage
 import com.coolgirl.poctokkotlin.Models.Plant
 import com.coolgirl.poctokkotlin.Models.WateringSchedule
-import com.coolgirl.poctokkotlin.api.ApiClient
+import com.coolgirl.poctokkotlin.Common.di.ApiClient
+import com.coolgirl.poctokkotlin.Common.getResourceNameFromDrawableString
 import com.coolgirl.poctokkotlin.api.ApiController
 import com.coolgirl.poctokkotlin.navigate.Screen
 import id.zelory.compressor.Compressor
@@ -38,10 +39,7 @@ class AddPlantViewModel : ViewModel() {
         plant!!.plantdescription = plantDescription
         SetPlant(plant!!)}
 
-    fun CreatePlant(){
-      //  SetPlant(Plant(null,null,0,null, GetUser()!!.userid, GetUserFor(),null,null))
-        plant = GetPlant()
-    }
+    fun CreatePlant(){ plant = GetPlant() }
 
     fun Save(navController: NavController){
         var plant = GetPlant()
@@ -54,8 +52,7 @@ class AddPlantViewModel : ViewModel() {
         if(plantNickname==null){
             //дописать
         }else{
-            var apiClient = ApiClient.start().create(ApiController::class.java)
-            val call: Call<Plant> = apiClient.postPlant(plant)
+            val call: Call<Plant> = ApiClient().postPlant(plant)
             call.enqueue(object : Callback<Plant> {
                 override fun onResponse(call: Call<Plant>, response: Response<Plant>) {
                     if(response.code()==200){
@@ -90,15 +87,6 @@ class AddPlantViewModel : ViewModel() {
                 }
                 plantImage = EncodeImage(file!!.path)
             }
-        }
-    }
-
-    fun getResourceNameFromDrawableString(drawableString: String): String {
-        val parts = drawableString.split(".")
-        return if (parts.size == 3 && parts[0] == "R" && parts[1] == "drawable") {
-            parts[2]
-        } else {
-            ""
         }
     }
 }

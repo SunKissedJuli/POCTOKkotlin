@@ -1,6 +1,5 @@
 package com.coolgirl.poctokkotlin.Screen.PlantPage
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -11,7 +10,7 @@ import com.coolgirl.poctokkotlin.Models.Notes
 import com.coolgirl.poctokkotlin.Models.Plant
 import com.coolgirl.poctokkotlin.Models.WateringHistory
 import com.coolgirl.poctokkotlin.SetPlant
-import com.coolgirl.poctokkotlin.api.ApiClient
+import com.coolgirl.poctokkotlin.Common.di.ApiClient
 import com.coolgirl.poctokkotlin.api.ApiController
 import retrofit2.Call
 import retrofit2.Callback
@@ -80,8 +79,7 @@ class PlantPageViewModel : ViewModel() {
     }
 
     fun LoadPlantData(plantId : Int){
-        var apiClient = ApiClient.start().create(ApiController::class.java)
-        val call: Call<Plant> = apiClient.getPlantProfileData(plantId!!)
+        val call: Call<Plant> = ApiClient().getPlantProfileData(plantId!!)
         call.enqueue(object : Callback<Plant> {
             override fun onResponse(call: Call<Plant>, response: Response<Plant>) {
                 if(response.code()==200){

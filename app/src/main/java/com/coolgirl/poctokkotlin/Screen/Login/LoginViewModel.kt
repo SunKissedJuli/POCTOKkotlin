@@ -1,14 +1,12 @@
 package com.coolgirl.poctokkotlin.Screen.Login
 
-import android.util.Log
-import androidx.compose.material.SnackbarHostState
 import androidx.compose.runtime.*
 import androidx.datastore.preferences.Preferences
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
 import com.coolgirl.poctokkotlin.*
 import com.coolgirl.poctokkotlin.Common.RandomString
-import com.coolgirl.poctokkotlin.api.ApiClient
+import com.coolgirl.poctokkotlin.Common.di.ApiClient
 import com.coolgirl.poctokkotlin.api.ApiController
 import com.coolgirl.poctokkotlin.Models.UserLoginDataResponse
 import com.coolgirl.poctokkotlin.R
@@ -17,7 +15,6 @@ import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import kotlin.random.Random
 
 class LoginViewModel : ViewModel() {
     private var isThisAutorize : Boolean = false
@@ -75,8 +72,7 @@ class LoginViewModel : ViewModel() {
     fun AutorizeClient(navController: NavController){
         if(isThisAutorize){
             if(userPassword!=null&&!userPassword.equals("")&&!userLogin.equals("")&&userLogin!=null){
-                var apiClient = ApiClient.start().create(ApiController::class.java)
-                val call: Call<UserLoginDataResponse> = apiClient.autorizeUser(userLogin,userPassword)
+                val call: Call<UserLoginDataResponse> = ApiClient().autorizeUser(userLogin,userPassword)
                 call.enqueue(object :Callback<UserLoginDataResponse>{
                     override fun onResponse(call: Call<UserLoginDataResponse>, response: Response<UserLoginDataResponse>) {
                         if(response.code()==200){

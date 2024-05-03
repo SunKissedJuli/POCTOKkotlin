@@ -13,17 +13,15 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import com.coolgirl.poctokkotlin.Common.EncodeImage
-import com.coolgirl.poctokkotlin.Common.RandomString
 import com.coolgirl.poctokkotlin.Common.getResourceNameFromDrawableString
 import com.coolgirl.poctokkotlin.GetNote
 import com.coolgirl.poctokkotlin.GetUser
 import com.coolgirl.poctokkotlin.Models.UserLoginDataResponse
 import com.coolgirl.poctokkotlin.SetNote
 import com.coolgirl.poctokkotlin.SetUser
-import com.coolgirl.poctokkotlin.api.ApiClient
+import com.coolgirl.poctokkotlin.Common.di.ApiClient
 import com.coolgirl.poctokkotlin.api.ApiController
 import com.coolgirl.poctokkotlin.navigate.Screen
 import id.zelory.compressor.Compressor
@@ -105,8 +103,7 @@ class ImageChoiceViewModel : ViewModel() {
     fun PutUserImage(userIcon : String){
         var User = GetUser()
         User?.userimage = userIcon
-        var apiClient = ApiClient.start().create(ApiController::class.java)
-        val call: Call<UserLoginDataResponse> = apiClient.createUser(User)
+        val call: Call<UserLoginDataResponse> = ApiClient().createUser(User)
         call.enqueue(object : Callback<UserLoginDataResponse> {
             override fun onResponse(call: Call<UserLoginDataResponse>, response: Response<UserLoginDataResponse>) {
                 if(response.code()==200){

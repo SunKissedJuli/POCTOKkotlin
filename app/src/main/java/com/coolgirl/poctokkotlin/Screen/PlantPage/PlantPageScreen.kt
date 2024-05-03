@@ -212,7 +212,6 @@ fun PhotoList(viewModel: PlantPageViewModel, photoList: List<Notes?>?, navContro
     if (viewModel.WhatItIs().equals("photos")) {
         if (photoList != null && photoList.isNotEmpty()) {
             val columnItems: Int = ((photoList.size).toFloat() / 3).roundToInt()+1
-            Log.d("tag", "хуй columnItems = " + columnItems)
             LazyColumn(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier
@@ -221,7 +220,6 @@ fun PhotoList(viewModel: PlantPageViewModel, photoList: List<Notes?>?, navContro
                     .background(colorResource(R.color.blue))
             ) {
                 items(columnItems) { columnIndex ->
-                    Log.d("tag", "хуй columnIndex = " + columnIndex)
                     Row(modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.Start) {
                         for (rowIndex in 0 until min(3, photoList.size - columnIndex * 3)) {

@@ -6,12 +6,10 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.coolgirl.poctokkotlin.Common.RandomString
 import com.coolgirl.poctokkotlin.GetUser
-import com.coolgirl.poctokkotlin.Models.UserLoginDataResponse
 import com.coolgirl.poctokkotlin.Models.WateringHistory
 import com.coolgirl.poctokkotlin.Models.WateringResponse
 import com.coolgirl.poctokkotlin.Models.WateringSchedule
-import com.coolgirl.poctokkotlin.SetUser
-import com.coolgirl.poctokkotlin.api.ApiClient
+import com.coolgirl.poctokkotlin.Common.di.ApiClient
 import com.coolgirl.poctokkotlin.api.ApiController
 import retrofit2.Call
 import retrofit2.Callback
@@ -44,8 +42,7 @@ class WateringPageViewModel : ViewModel() {
     }
 
     fun GetData(){
-        var apiClient = ApiClient.start().create(ApiController::class.java)
-        val call: Call<WateringResponse> = apiClient.getWatering(GetUser()!!.userid)
+        val call: Call<WateringResponse> = ApiClient().getWatering(GetUser()!!.userid)
         call.enqueue(object : Callback<WateringResponse> {
             override fun onResponse(call: Call<WateringResponse>, response: Response<WateringResponse>) {
                 if(response.code()==200 && response.body()!=null){
