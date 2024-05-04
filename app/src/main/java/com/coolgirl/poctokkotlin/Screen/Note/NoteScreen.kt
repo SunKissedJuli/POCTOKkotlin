@@ -1,11 +1,5 @@
 package com.coolgirl.poctokkotlin.Screen.Note
 
-import android.content.Context
-import android.graphics.Paint.Align
-import android.net.Uri
-import android.util.Log
-import android.widget.Spinner
-import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -19,22 +13,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.modifier.modifierLocalConsumer
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import coil.compose.rememberImagePainter
-import com.coolgirl.poctokkotlin.Common.DecodeImage
-import com.coolgirl.poctokkotlin.Common.LoadNotesStatus
-import com.coolgirl.poctokkotlin.GetUser
+import com.coolgirl.poctokkotlin.commons.DecodeImage
+import com.coolgirl.poctokkotlin.commons.LoadNotesStatus
 import com.coolgirl.poctokkotlin.Items.SpinnerSample
 import com.coolgirl.poctokkotlin.R
 import com.coolgirl.poctokkotlin.navigate.Screen

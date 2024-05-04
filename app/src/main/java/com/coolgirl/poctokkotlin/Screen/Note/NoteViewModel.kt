@@ -5,9 +5,8 @@ import androidx.compose.runtime.*
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
 import com.coolgirl.poctokkotlin.*
-import com.coolgirl.poctokkotlin.Models.Notes
-import com.coolgirl.poctokkotlin.Common.di.ApiClient
-import com.coolgirl.poctokkotlin.api.ApiController
+import com.coolgirl.poctokkotlin.data.dto.Notes
+import com.coolgirl.poctokkotlin.di.ApiClient
 import com.coolgirl.poctokkotlin.navigate.Screen
 import retrofit2.Call
 import retrofit2.Callback

@@ -1,4 +1,4 @@
-package com.coolgirl.poctokkotlin.Models
+package com.coolgirl.poctokkotlin.data.dto
 
 data class Plant(
     var plantname: String?,

@@ -29,28 +29,23 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.rememberImagePainter
-import com.coolgirl.poctokkotlin.Common.DecodeImage
+import com.coolgirl.poctokkotlin.commons.DecodeImage
 import com.coolgirl.poctokkotlin.Items.Shedule
 import com.coolgirl.poctokkotlin.Items.Watering.WateringItemsViewModel
 import com.coolgirl.poctokkotlin.R
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
-private val fileName = mutableStateOf(0)
-@OptIn(ExperimentalMaterialApi::class)
-private var sheetState: ModalBottomSheetState? = null
-private var scope: CoroutineScope? = null
-
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun AddPlantScreen(navController: NavController){
     var viewModel : AddPlantViewModel = viewModel()
     viewModel.CreatePlant()
-    sheetState = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden)
-    scope = rememberCoroutineScope()
+    viewModel.sheetState = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden)
+    viewModel.scope = rememberCoroutineScope()
     ModalBottomSheetLayout (
         sheetShape = RoundedCornerShape(topEnd = 65.dp, topStart = 65.dp),
-        sheetState = sheetState!!,
+        sheetState = viewModel.sheetState!!,
         sheetContent = { PlantImageBottomSheet(viewModel) },
         scrimColor = colorResource(R.color.gray),
         content = {
@@ -123,7 +118,7 @@ fun AddPlantHead(navController: NavController, viewModel: AddPlantViewModel){
                             .clip(CircleShape))
                 }
             }
-            Button(onClick = {  scope!!.launch { sheetState!!.show() }},
+            Button(onClick = {  viewModel.scope!!.launch { viewModel.sheetState!!.show() }},
                 modifier = Modifier
                     .padding(top = 10.dp, bottom = 20.dp, start = 2.dp)
                     .fillMaxWidth(0.90f),
@@ -179,9 +174,9 @@ fun AddPlantHead(navController: NavController, viewModel: AddPlantViewModel){
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun PlantImageBottomSheet(viewModel: AddPlantViewModel) {
-    key(fileName.value){
-        if(fileName.value!=0){
-            viewModel.GetFileFromDrawable(fileName.value!!)
+    key(viewModel.fileName.value){
+        if(viewModel.fileName.value!=0){
+            viewModel.GetFileFromDrawable(viewModel.fileName.value!!)
         }
     }
 
@@ -192,24 +187,24 @@ fun PlantImageBottomSheet(viewModel: AddPlantViewModel) {
         verticalArrangement = Arrangement.SpaceAround,
         horizontalAlignment = Alignment.CenterHorizontally) {
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceAround){
-            ImageItemForPlantBottomSheet(R.drawable.plant1)
-            ImageItemForPlantBottomSheet(R.drawable.plant1)
-            ImageItemForPlantBottomSheet(R.drawable.plant2)
+            ImageItemForPlantBottomSheet(R.drawable.plant1, viewModel)
+            ImageItemForPlantBottomSheet(R.drawable.plant1, viewModel)
+            ImageItemForPlantBottomSheet(R.drawable.plant2, viewModel)
         }
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceAround){
-            ImageItemForPlantBottomSheet(R.drawable.plant3)
-            ImageItemForPlantBottomSheet(R.drawable.plant_icon)
-            ImageItemForPlantBottomSheet(R.drawable.universal1)
+            ImageItemForPlantBottomSheet(R.drawable.plant3, viewModel)
+            ImageItemForPlantBottomSheet(R.drawable.plant_icon, viewModel)
+            ImageItemForPlantBottomSheet(R.drawable.universal1, viewModel)
         }
         Row(modifier = Modifier.fillMaxWidth().padding(start = 20.dp), horizontalArrangement = Arrangement.Start){
-            ImageItemForPlantBottomSheet(R.drawable.univarsal2)
+            ImageItemForPlantBottomSheet(R.drawable.univarsal2, viewModel)
         }
     }
 }
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun ImageItemForPlantBottomSheet(image : kotlin.Int){
+fun ImageItemForPlantBottomSheet(image : kotlin.Int, viewModel: AddPlantViewModel){
     Image(
         painter = painterResource(image),
         contentDescription = "image",
@@ -218,7 +213,7 @@ fun ImageItemForPlantBottomSheet(image : kotlin.Int){
             .padding(15.dp)
             .size(90.dp)
             .clip(CircleShape)
-            .clickable { fileName.value = image
-                scope!!.launch { sheetState!!.hide() }}
+            .clickable { viewModel.fileName.value = image
+                viewModel.scope!!.launch { viewModel.sheetState!!.hide() }}
             .border(2.dp, colorResource(R.color.brown), CircleShape))
 }

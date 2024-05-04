@@ -34,22 +34,17 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class)
-private var sheetState: ModalBottomSheetState? = null
-private var scope: CoroutineScope? = null
-private val fileName = mutableStateOf(0)
-
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun ImageChoiceScreen(navController: NavHostController, whatItIs : String) {
-    fileName.value=0
     var viewModel: ImageChoiceViewModel = viewModel()
+   // viewModel.fileName.value=0
     viewModel.whatItIs = whatItIs
     var launcher = viewModel.OpenGalery(navController)
-    sheetState = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden)
-    scope = rememberCoroutineScope()
+    viewModel.sheetState = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden)
+    viewModel.scope = rememberCoroutineScope()
     ModalBottomSheetLayout (
         sheetShape = RoundedCornerShape(topEnd = 65.dp, topStart = 65.dp),
-        sheetState = sheetState!!,
+        sheetState =  viewModel.sheetState!!,
         sheetContent = { ImageBottomSheet(viewModel, navController) },
         scrimColor = colorResource(R.color.gray),
         content = {
@@ -95,8 +90,8 @@ fun SetImageChoiceScreen(navController: NavHostController, whatItIs: String, vie
                 .background(color = colorResource(R.color.stone), shape = RoundedCornerShape(25)),
                 contentAlignment = Alignment.Center) {
                 Column(modifier = Modifier
-                        .fillMaxSize()
-                        .padding(20.dp),
+                    .fillMaxSize()
+                    .padding(20.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.SpaceEvenly) {
                     Image(painter = painterResource(R.drawable.photo_plug),
@@ -124,8 +119,8 @@ fun SetImageChoiceScreen(navController: NavHostController, whatItIs: String, vie
                 .background(color = colorResource(R.color.stone), shape = RoundedCornerShape(25)),
                 contentAlignment = Alignment.Center) {
                 Column(modifier = Modifier
-                        .fillMaxSize()
-                        .padding(20.dp),
+                    .fillMaxSize()
+                    .padding(20.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.SpaceEvenly) {
                     Image(painter = painterResource(R.drawable.photo_plug),
@@ -149,7 +144,7 @@ fun SetImageChoiceScreen(navController: NavHostController, whatItIs: String, vie
             Box(modifier = Modifier
                 .fillMaxWidth(0.9f)
                 .fillMaxHeight(0.85f)
-                .clickable { scope!!.launch { sheetState!!.show() }}
+                .clickable {  viewModel.scope!!.launch {  viewModel.sheetState!!.show() }}
                 .background(color = colorResource(R.color.stone), shape = RoundedCornerShape(25)),
                 contentAlignment = Alignment.Center) {
                 Column(modifier = Modifier
@@ -185,9 +180,9 @@ fun SetImageChoiceScreen(navController: NavHostController, whatItIs: String, vie
 
 @Composable
 fun ImageBottomSheet(viewModel: ImageChoiceViewModel, navController: NavHostController) {
-    key(fileName.value){
-        if(fileName.value!=0){
-            viewModel.GetFileFromDrawable(fileName.value!!, navController)
+    key( viewModel.fileName.value){
+        if( viewModel.fileName.value!=0){
+            viewModel.GetFileFromDrawable( viewModel.fileName.value!!, navController)
         }
     }
     Column(modifier = Modifier
@@ -197,31 +192,31 @@ fun ImageBottomSheet(viewModel: ImageChoiceViewModel, navController: NavHostCont
         verticalArrangement = Arrangement.SpaceAround,
         horizontalAlignment = Alignment.CenterHorizontally) {
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceAround){
-            ImageForBottomSheet(R.drawable.avatar11)
-            ImageForBottomSheet(R.drawable.avatar2)
-            ImageForBottomSheet(R.drawable.avatar3)
+            ImageForBottomSheet(R.drawable.avatar11, viewModel)
+            ImageForBottomSheet(R.drawable.avatar2, viewModel)
+            ImageForBottomSheet(R.drawable.avatar3, viewModel)
         }
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceAround){
-            ImageForBottomSheet(R.drawable.avatar4)
-            ImageForBottomSheet(R.drawable.avatar5)
-            ImageForBottomSheet(R.drawable.avatar6)
+            ImageForBottomSheet(R.drawable.avatar4, viewModel)
+            ImageForBottomSheet(R.drawable.avatar5, viewModel)
+            ImageForBottomSheet(R.drawable.avatar6, viewModel)
         }
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceAround){
-            ImageForBottomSheet(R.drawable.universal1)
-            ImageForBottomSheet(R.drawable.univarsal2)
-            ImageForBottomSheet(R.drawable.plant_icon)
+            ImageForBottomSheet(R.drawable.universal1, viewModel)
+            ImageForBottomSheet(R.drawable.univarsal2, viewModel)
+            ImageForBottomSheet(R.drawable.plant_icon, viewModel)
         }
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceAround){
-            ImageForBottomSheet(R.drawable.plant1)
-            ImageForBottomSheet(R.drawable.plant2)
-            ImageForBottomSheet(R.drawable.plant3)
+            ImageForBottomSheet(R.drawable.plant1, viewModel)
+            ImageForBottomSheet(R.drawable.plant2, viewModel)
+            ImageForBottomSheet(R.drawable.plant3, viewModel)
         }
     }
 }
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun ImageForBottomSheet(image : kotlin.Int){
+fun ImageForBottomSheet(image : kotlin.Int, viewModel : ImageChoiceViewModel){
     Image(
         painter = painterResource(image),
         contentDescription = "image",
@@ -230,8 +225,8 @@ fun ImageForBottomSheet(image : kotlin.Int){
             .padding(15.dp)
             .size(90.dp)
             .clip(CircleShape)
-            .clickable { fileName.value = image
-                scope!!.launch { sheetState!!.hide() }}
+            .clickable {  viewModel.fileName.value = image
+                viewModel.scope!!.launch {  viewModel.sheetState!!.hide() }}
             .border(2.dp, colorResource(R.color.brown), CircleShape))
 }
 

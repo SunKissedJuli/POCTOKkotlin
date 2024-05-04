@@ -5,11 +5,13 @@ import androidx.datastore.preferences.Preferences
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
 import com.coolgirl.poctokkotlin.*
-import com.coolgirl.poctokkotlin.Common.RandomString
-import com.coolgirl.poctokkotlin.Common.di.ApiClient
-import com.coolgirl.poctokkotlin.api.ApiController
-import com.coolgirl.poctokkotlin.Models.UserLoginDataResponse
+import com.coolgirl.poctokkotlin.commons.RandomString
+import com.coolgirl.poctokkotlin.di.ApiClient
+import com.coolgirl.poctokkotlin.data.dto.UserLoginDataResponse
 import com.coolgirl.poctokkotlin.R
+import com.coolgirl.poctokkotlin.commons.UserDataStore
+import com.coolgirl.poctokkotlin.commons.UserDataStore.coroutineScope
+import com.coolgirl.poctokkotlin.commons.UserScheme
 import com.coolgirl.poctokkotlin.navigate.Screen
 import kotlinx.coroutines.launch
 import retrofit2.Call
@@ -56,12 +58,11 @@ class LoginViewModel : ViewModel() {
 
     @Composable
     fun LoadData(){
-        val userDataStore = GetDataStore()
+        val userDataStore = UserDataStore.GetDataStore()
         var login by remember { mutableStateOf("") }
         coroutineScope?.launch {
             userDataStore?.data?.collect { pref: Preferences ->
                 login = pref[UserScheme.EMAIL].toString()!!
-             //   SetLoginData(UserLoginDataResponse(null,null,0,null,null,null,null,null))
             }
         }
         if(!login.equals("")&&login!==null&&!login.equals("null")){
@@ -77,7 +78,7 @@ class LoginViewModel : ViewModel() {
                     override fun onResponse(call: Call<UserLoginDataResponse>, response: Response<UserLoginDataResponse>) {
                         if(response.code()==200){
                             response.body()?.let { SetUser(it)}
-                            response.body()?.let { SetLoginData(it) }
+                            response.body()?.let { UserDataStore.SetLoginData(it) }
                             navController.navigate(Screen.UserPage.user_id(response.body()!!.userid))
                         }
                     }

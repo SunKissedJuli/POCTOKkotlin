@@ -1,4 +1,4 @@
-package com.coolgirl.poctokkotlin.Common
+package com.coolgirl.poctokkotlin.commons
 
 fun getResourceNameFromDrawableString(drawableString: String): String {
     val parts = drawableString.split(".")

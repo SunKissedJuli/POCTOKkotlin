@@ -22,26 +22,25 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import com.coolgirl.poctokkotlin.Common.LoadNotesStatus
+import com.coolgirl.poctokkotlin.commons.LoadNotesStatus
 import com.coolgirl.poctokkotlin.GetUser
 import com.coolgirl.poctokkotlin.Items.BottomPanel
 import com.coolgirl.poctokkotlin.Items.BottomSheet
 import com.coolgirl.poctokkotlin.Items.HistoryItem
 import com.coolgirl.poctokkotlin.Items.Shedule
 import com.coolgirl.poctokkotlin.Items.Watering.WateringItemsViewModel
-import com.coolgirl.poctokkotlin.Models.WateringHistory
-import com.coolgirl.poctokkotlin.Models.WateringSchedule
+import com.coolgirl.poctokkotlin.data.dto.WateringHistory
+import com.coolgirl.poctokkotlin.data.dto.WateringSchedule
 import com.coolgirl.poctokkotlin.R
 import com.coolgirl.poctokkotlin.Screen.PlantPage.*
 import kotlinx.coroutines.launch
-
-private var wateringView : WateringItemsViewModel? = null
 
 @Composable
 fun WateringPageScreen(navController: NavHostController){
     var viewModel : WateringPageViewModel = viewModel()
     val coroutineScope = rememberCoroutineScope()
     var loadNotesStatus by remember { mutableStateOf(LoadNotesStatus.NOT_STARTED) }
+    var wateringView : WateringItemsViewModel = viewModel()
 
     LaunchedEffect(loadNotesStatus) {
         if (loadNotesStatus == LoadNotesStatus.NOT_STARTED) {
@@ -54,15 +53,14 @@ fun WateringPageScreen(navController: NavHostController){
 
     key(viewModel.DataLoaded){
         if (loadNotesStatus == LoadNotesStatus.COMPLETED) {
-            wateringView = viewModel()
-            SetWateringPageScreen(viewModel, navController)
+            SetWateringPageScreen(viewModel, navController, wateringView)
         }
     }
 }
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun SetWateringPageScreen(viewModel: WateringPageViewModel, navController: NavHostController){
+fun SetWateringPageScreen(viewModel: WateringPageViewModel, navController: NavHostController, wateringItemsViewModel: WateringItemsViewModel){
 
     val sheetState = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden)
     val scope = rememberCoroutineScope()
@@ -83,13 +81,12 @@ fun SetWateringPageScreen(viewModel: WateringPageViewModel, navController: NavHo
                     .background(colorResource(R.color.blue)),
                 verticalArrangement = Arrangement.Top) {
                     key(viewModel.DataLoaded) {
-                        ExpandableCard("Графики полива", viewModel)
-                        ExpandableCard("Истории полива", viewModel)
+                        ExpandableCard("Графики полива", viewModel, wateringItemsViewModel)
+                        ExpandableCard("Истории полива", viewModel, wateringItemsViewModel)
                     }
                 }
                 BottomSheet(navController, GetUser()!!.userid, scope, sheetState)
             }
-
         }
     )
 }
@@ -100,7 +97,7 @@ fun SetNotifications(){
 }
 
 @Composable
-fun SheduleList(sheduleList : List<WateringSchedule?>?, viewModel: WateringPageViewModel){
+fun SheduleList(sheduleList : List<WateringSchedule?>?, viewModel: WateringPageViewModel, wateringView : WateringItemsViewModel){
     if(sheduleList!=null){
         for(item in sheduleList){
             Shedule(item!!.schedule ?: "0000000", viewModel.GetPlantName(item.plantid!!), item.plantid, wateringView!!, false)
@@ -120,9 +117,7 @@ fun HistoryList(historyList : List<WateringHistory?>?, viewModel: WateringPageVi
 @ExperimentalMaterialApi
 @Composable
 fun ExpandableCard(
-    title: String,
-    viewModel: WateringPageViewModel
-) {
+    title: String, viewModel: WateringPageViewModel, wateringView : WateringItemsViewModel) {
     var expandedState by remember { mutableStateOf(false) }
     val rotationState by animateFloatAsState(targetValue = if (expandedState) 180f else 0f)
 
@@ -165,7 +160,7 @@ fun ExpandableCard(
             }
             if (expandedState) {
                 if(title.equals("Графики полива")) {
-                    SheduleList(viewModel.GetShedule(), viewModel)
+                    SheduleList(viewModel.GetShedule(), viewModel, wateringView)
                 }else {
                     HistoryList(viewModel.GetHistory(), viewModel)
                 }

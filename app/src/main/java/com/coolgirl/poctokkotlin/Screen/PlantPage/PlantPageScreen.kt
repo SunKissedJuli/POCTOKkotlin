@@ -1,11 +1,8 @@
 package com.coolgirl.poctokkotlin.Screen.PlantPage
 
-import android.util.Log
 import androidx.compose.foundation.*
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
@@ -13,39 +10,27 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
-import androidx.compose.ui.input.nestedscroll.NestedScrollSource
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import coil.compose.rememberImagePainter
-import com.coolgirl.poctokkotlin.Common.LoadNotesStatus
+import com.coolgirl.poctokkotlin.commons.LoadNotesStatus
 import com.coolgirl.poctokkotlin.GetPlant
 import com.coolgirl.poctokkotlin.Items.*
 import com.coolgirl.poctokkotlin.Items.Watering.WateringItemsViewModel
-import com.coolgirl.poctokkotlin.Models.Notes
-import com.coolgirl.poctokkotlin.Models.Plant
-import com.coolgirl.poctokkotlin.Models.WateringHistory
+import com.coolgirl.poctokkotlin.data.dto.Notes
+import com.coolgirl.poctokkotlin.data.dto.WateringHistory
 import com.coolgirl.poctokkotlin.R
 import com.coolgirl.poctokkotlin.Screen.UserPage.*
 import com.coolgirl.poctokkotlin.navigate.Screen
 import kotlinx.coroutines.launch
 import kotlin.math.min
 import kotlin.math.roundToInt
-
-
-private var noteList : List<Notes?>? = null
-private var photoList : List<Notes?>?= null
-private var historyList : List<WateringHistory?>?= null
 
 @Composable
 fun PlantPageScreen(navController: NavHostController, plantId : Int) {
@@ -64,9 +49,6 @@ fun PlantPageScreen(navController: NavHostController, plantId : Int) {
     }
     key(viewModel.dataLoaded) {
         if (loadNotesStatus == LoadNotesStatus.COMPLETED) {
-            noteList = viewModel.GetNotes()
-            photoList = viewModel.GetPhotos()
-            historyList = viewModel.GetHistoryList()
             SetPlantPage(navController, viewModel, wateringViewModel)
         }
     }
@@ -93,17 +75,15 @@ fun SetPlantPage(navController: NavHostController, viewModel: PlantPageViewModel
                 key(viewModel.change) {
                     when (viewModel.WhatItIs()) {
                         "shedule" -> PlantWatering(viewModel, wateringViewModel)
-                        "notes" -> NoteList(viewModel, noteList, navController)
-                        "photos" -> PhotoList(viewModel, photoList, navController)
+                        "notes" -> NoteList(viewModel, viewModel.GetNotes(), navController)
+                        "photos" -> PhotoList(viewModel, viewModel.GetPhotos(), navController)
                         else -> Text("sorry") }
                     if(viewModel.plant!=null){
                         BottomSheet(navController, viewModel.plant!!.userid!!, scope, sheetState) }
                     }
                 }
-        })
+        } )
 }
-
-
 
 @Composable
 fun SetPlantHead(viewModel: PlantPageViewModel) {
@@ -179,7 +159,7 @@ fun PlantWatering(viewModel: PlantPageViewModel, wateringViewModel : WateringIte
                 .background(colorResource(R.color.blue))){
                 Shedule(viewModel.plant!!.wateringSchedule?.schedule ?: "0000000", viewModel.plant!!.plantname, viewModel.plant!!.plantid, wateringViewModel, false)
                 AddWatering(viewModel.plant!!.plantname, wateringViewModel, true)
-                HistoryList(historyList, viewModel)
+                HistoryList(viewModel.GetHistoryList(), viewModel)
             }
         }
     }

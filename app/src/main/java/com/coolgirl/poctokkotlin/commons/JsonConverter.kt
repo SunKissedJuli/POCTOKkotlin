@@ -1,4 +1,4 @@
-package com.coolgirl.poctokkotlin.Common
+package com.coolgirl.poctokkotlin.commons
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory

@@ -4,14 +4,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import com.coolgirl.poctokkotlin.Common.RandomString
+import com.coolgirl.poctokkotlin.commons.RandomString
 import com.coolgirl.poctokkotlin.GetUser
-import com.coolgirl.poctokkotlin.Models.Notes
-import com.coolgirl.poctokkotlin.Models.Plant
-import com.coolgirl.poctokkotlin.Models.WateringHistory
+import com.coolgirl.poctokkotlin.data.dto.Notes
+import com.coolgirl.poctokkotlin.data.dto.Plant
+import com.coolgirl.poctokkotlin.data.dto.WateringHistory
 import com.coolgirl.poctokkotlin.SetPlant
-import com.coolgirl.poctokkotlin.Common.di.ApiClient
-import com.coolgirl.poctokkotlin.api.ApiController
+import com.coolgirl.poctokkotlin.di.ApiClient
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -39,17 +38,17 @@ class PlantPageViewModel : ViewModel() {
         change = RandomString()
     }
 
-    fun GetNotes() : List<Notes>? {
+    fun GetNotes() : List<Notes?>? {
         if(plant!=null){
             var allNotesList :List<Notes?>? = GetUser()?.notes
-            var noteList : MutableList<Notes>? = mutableListOf()
+            var newNoteList : MutableList<Notes?>? = mutableListOf()
             for(note in allNotesList.orEmpty()){
                 if(note!!.plantid==plant?.plantid&&note.image==null){
-                    noteList?.add(note!!)
+                    newNoteList?.add(note!!)
                 }
             }
-            if (noteList != null) {
-                return noteList.sortedByDescending { it?.noteid }
+            if (newNoteList != null) {
+                return newNoteList!!.sortedByDescending { it?.noteid }
             }
         }
         return null
@@ -63,17 +62,17 @@ class PlantPageViewModel : ViewModel() {
     }
 
     fun GetPhotos(): List<Notes?>?{
-        var notes = mutableListOf<Notes>()
+        var photos = mutableListOf<Notes>()
         val user = GetUser()
         if(plant!=null && user!=null && user.notes!=null){
             for(item in user?.notes!!){
                 if (item != null && item.image != null && !item.image.equals("")){
                     if(item.plantid == plant!!.plantid) {
-                        notes.add(item)
+                        photos.add(item)
                     }
                 }
             }
-            return notes.sortedByDescending { it?.noteid }
+            return photos.sortedByDescending { it?.noteid }
         }
         return null
     }

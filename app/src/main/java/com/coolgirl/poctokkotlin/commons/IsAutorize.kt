@@ -3,7 +3,9 @@ package com.coolgirl.poctokkotlin
 import androidx.compose.runtime.*
 import androidx.datastore.preferences.Preferences
 import androidx.navigation.compose.rememberNavController
-import com.coolgirl.poctokkotlin.Models.UserLoginDataResponse
+import com.coolgirl.poctokkotlin.commons.*
+import com.coolgirl.poctokkotlin.commons.UserDataStore.coroutineScope
+import com.coolgirl.poctokkotlin.data.dto.UserLoginDataResponse
 import com.coolgirl.poctokkotlin.navigate.AppNavHost
 import com.coolgirl.poctokkotlin.navigate.Screen
 import kotlinx.coroutines.launch
@@ -12,17 +14,18 @@ private var change by mutableStateOf("")
 
 @Composable
 fun IsAutorize() {
-    InitDataStore()
-    val userDataStore = GetDataStore()
+    val userDataStore = UserDataStore.GetDataStore()
     var isAutorize by remember { mutableStateOf(false) }
     var id by remember { mutableStateOf("") }
-
-    coroutineScope?.launch {
-        userDataStore?.data?.collect { pref: Preferences ->
-            isAutorize = pref[UserScheme.IS_AUTORIZE] == true
-            id = pref[UserScheme.ID].toString()!!
+    LaunchedEffect(Unit) {
+        coroutineScope?.launch {
+            userDataStore?.data?.collect { pref: Preferences ->
+                isAutorize = pref[UserScheme.IS_AUTORIZE] == true
+                id = pref[UserScheme.ID].toString()!!
+            }
         }
     }
+
     if (isAutorize) {
         SetUser(UserLoginDataResponse(null,null,id.toInt(),null,null,null,null,null))
         AppNavHost(navController = rememberNavController(), startDestination = Screen.UserPage.user_id(id.toInt()))

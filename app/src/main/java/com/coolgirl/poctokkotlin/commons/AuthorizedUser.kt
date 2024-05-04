@@ -1,8 +1,8 @@
 package com.coolgirl.poctokkotlin
 
-import com.coolgirl.poctokkotlin.Models.Notes
-import com.coolgirl.poctokkotlin.Models.Plant
-import com.coolgirl.poctokkotlin.Models.UserLoginDataResponse
+import com.coolgirl.poctokkotlin.data.dto.Notes
+import com.coolgirl.poctokkotlin.data.dto.Plant
+import com.coolgirl.poctokkotlin.data.dto.UserLoginDataResponse
 
 
 private var user : UserLoginDataResponse? = null
@@ -24,13 +24,13 @@ fun GetPlant() : Plant?{
 
 fun SetPlant(newPlant : Plant){ plant = newPlant }
 
-fun GetPlantFor() : Plant{
+fun GetPlantFor() : Plant {
     var plantFor= Plant(plant!!.plantname,plant!!.plantdescription,plant!!.plantid, plant!!.plantimage, plant!!.userid,
         GetUserFor(), null, null)
     return plantFor
 }
 
-fun GetUserFor() : UserLoginDataResponse{
+fun GetUserFor() : UserLoginDataResponse {
     var user = GetUser()
     user!!.notes = null
     user!!.plants = null

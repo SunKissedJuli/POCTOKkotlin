@@ -1,7 +1,6 @@
 package com.coolgirl.poctokkotlin.Screen.UserPage
 
 import android.annotation.SuppressLint
-import android.net.Uri
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -23,24 +22,18 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import coil.compose.rememberImagePainter
-import com.coolgirl.poctokkotlin.Models.Notes
-import com.coolgirl.poctokkotlin.Models.Plant
+import com.coolgirl.poctokkotlin.data.dto.Notes
+import com.coolgirl.poctokkotlin.data.dto.Plant
 import com.coolgirl.poctokkotlin.R
 import kotlinx.coroutines.launch
-import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.runtime.*
-import com.coolgirl.poctokkotlin.Common.LoadNotesStatus
+import com.coolgirl.poctokkotlin.commons.LoadNotesStatus
 import com.coolgirl.poctokkotlin.Items.*
 import com.coolgirl.poctokkotlin.navigate.Screen
 import kotlin.math.min
 import java.util.*
 import kotlin.math.roundToInt
-
-private var noteList : List<Notes?>? = null
-private var plantList : List<Plant?>?= null
-private var photoList : List<Notes?>?= null
 
 @Composable
 fun UserPageScreen(navController: NavHostController, userId : Int) {
@@ -59,9 +52,6 @@ fun UserPageScreen(navController: NavHostController, userId : Int) {
 
     key(viewModel.DataLoaded){
         if (loadNotesStatus == LoadNotesStatus.COMPLETED) {
-            noteList = viewModel.GetNotes()
-            plantList = viewModel.GetPlants()
-            photoList = viewModel.GetPhotos()
             SetUserPage(navController, viewModel)
         }
     }
@@ -88,9 +78,9 @@ fun SetUserPage(navController: NavHostController, viewModel: UserPageViewModel){
                 SetButtonHead(viewModel)
                 key(viewModel.change){
                     when (viewModel.WhatItIs()) {
-                        "plants" ->  PlantList(viewModel, plantList, navController)
-                        "notes" ->  NoteList(viewModel, noteList, navController)
-                        "photos" -> PhotoList(viewModel, photoList, navController)
+                        "plants" ->  PlantList(viewModel, viewModel.GetPlants(), navController)
+                        "notes" ->  NoteList(viewModel, viewModel.GetNotes(), navController)
+                        "photos" -> PhotoList(viewModel, viewModel.GetPhotos(), navController)
                         else -> Text("sorry")
                     }
                 }
@@ -197,43 +187,6 @@ fun NoteList(viewModel: UserPageViewModel, noteList: List<Notes?>?, navControlle
             }else { SetPlug(R.string.plug_note, R.string.plug_note_description, R.drawable.note_plug) }
         }
 }
-
-/*@Composable
-fun PhotoList(viewModel: UserPageViewModel, photoList: List<Notes?>?, navController: NavHostController){
-    if(viewModel.WhatItIs().equals("photos")){
-        if(photoList!=null&&photoList.size!=null&&photoList.size!=0){
-            val columnItems : Int = ((photoList!!.size)!!.toFloat()/3).roundToInt()
-            LazyColumn(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier
-                    .fillMaxHeight(0.86f)
-                    .fillMaxWidth()
-                    .background(colorResource(R.color.blue))) {
-                items(columnItems) { columnIndex ->
-                    LazyRow(modifier = Modifier.fillMaxWidth()) {
-                        val count = when (photoList.size - columnIndex * 3) {
-                            1 -> 1
-                            2 -> 2
-                            else -> 3
-                        }
-                        items(count) { rowIndex ->
-                            val currentIndex = columnIndex * 3 + rowIndex
-                            Image(
-                                painter = rememberImagePainter("http://45.154.1.94" + (photoList[currentIndex]!!.image)),
-                                contentDescription = "image",
-                                contentScale = ContentScale.Crop,
-                                modifier = Modifier
-                                    .padding(2.dp)
-                                    .size(116.dp)
-                                    .clickable { navController.navigate(Screen.Note.note_id(photoList[currentIndex]!!.noteid)) })
-                        }
-                    }
-                }
-            }
-        }else { SetPlug(R.string.plug_photo, R.string.plug_photo_description, R.drawable.photo_plug) }
-    }
-}
-*/
 
 @Composable
 fun PhotoList(viewModel: UserPageViewModel, photoList: List<Notes?>?, navController: NavHostController) {

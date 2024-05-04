@@ -2,20 +2,22 @@ package com.coolgirl.poctokkotlin.Screen.AddPlant
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
 import com.coolgirl.poctokkotlin.*
-import com.coolgirl.poctokkotlin.Common.EncodeImage
-import com.coolgirl.poctokkotlin.Models.Plant
-import com.coolgirl.poctokkotlin.Models.WateringSchedule
-import com.coolgirl.poctokkotlin.Common.di.ApiClient
-import com.coolgirl.poctokkotlin.Common.getResourceNameFromDrawableString
-import com.coolgirl.poctokkotlin.api.ApiController
+import com.coolgirl.poctokkotlin.commons.EncodeImage
+import com.coolgirl.poctokkotlin.data.dto.Plant
+import com.coolgirl.poctokkotlin.data.dto.WateringSchedule
+import com.coolgirl.poctokkotlin.di.ApiClient
+import com.coolgirl.poctokkotlin.commons.getResourceNameFromDrawableString
 import com.coolgirl.poctokkotlin.navigate.Screen
 import id.zelory.compressor.Compressor
 import id.zelory.compressor.constraint.default
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
@@ -28,6 +30,10 @@ class AddPlantViewModel : ViewModel() {
     var plantDescription by mutableStateOf("")
     var plant : Plant? = null
     var plantImage by mutableStateOf("")
+    val fileName = mutableStateOf(0)
+    @OptIn(ExperimentalMaterialApi::class)
+    var sheetState: ModalBottomSheetState? = null
+    var scope: CoroutineScope? = null
 
     fun UpdatePlantNickname(nickname: String) {
         plantNickname = nickname

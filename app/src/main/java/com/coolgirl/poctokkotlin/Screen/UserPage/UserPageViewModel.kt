@@ -2,14 +2,13 @@ package com.coolgirl.poctokkotlin.Screen.UserPage
 
 import androidx.compose.runtime.*
 import androidx.lifecycle.ViewModel
-import com.coolgirl.poctokkotlin.Common.RandomString
+import com.coolgirl.poctokkotlin.commons.RandomString
 import com.coolgirl.poctokkotlin.GetUser
-import com.coolgirl.poctokkotlin.Models.Notes
-import com.coolgirl.poctokkotlin.Models.Plant
-import com.coolgirl.poctokkotlin.Models.UserLoginDataResponse
+import com.coolgirl.poctokkotlin.data.dto.Notes
+import com.coolgirl.poctokkotlin.data.dto.Plant
+import com.coolgirl.poctokkotlin.data.dto.UserLoginDataResponse
 import com.coolgirl.poctokkotlin.SetUser
-import com.coolgirl.poctokkotlin.Common.di.ApiClient
-import com.coolgirl.poctokkotlin.api.ApiController
+import com.coolgirl.poctokkotlin.di.ApiClient
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response

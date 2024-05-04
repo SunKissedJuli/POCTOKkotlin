@@ -27,27 +27,22 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.rememberImagePainter
-import com.coolgirl.poctokkotlin.Common.DecodeImage
+import com.coolgirl.poctokkotlin.commons.DecodeImage
 import com.coolgirl.poctokkotlin.R
 import com.coolgirl.poctokkotlin.Screen.Registration.RegistrationViewModel
 import com.coolgirl.poctokkotlin.Screen.UserPage.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
-private val fileName = mutableStateOf(0)
-@OptIn(ExperimentalMaterialApi::class)
-private var sheetState: ModalBottomSheetState? = null
-private var scope: CoroutineScope? = null
-
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun RegistrationScreen(navController: NavController){
     var viewModel : RegistrationViewModel = viewModel()
-    sheetState = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden)
-    scope = rememberCoroutineScope()
+    viewModel.sheetState = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden)
+    viewModel.scope = rememberCoroutineScope()
     ModalBottomSheetLayout (
         sheetShape = RoundedCornerShape(topEnd = 65.dp, topStart = 65.dp),
-        sheetState = sheetState!!,
+        sheetState =  viewModel.sheetState!!,
         sheetContent = { UserImageBottomSheet(viewModel) },
         scrimColor = colorResource(R.color.gray),
         content = {
@@ -71,7 +66,7 @@ fun SetRegistrationScreen(navController: NavController, viewModel: RegistrationV
                     contentDescription = "image",
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
-                        .clickable { scope!!.launch { sheetState!!.show() } }
+                        .clickable {  viewModel.scope!!.launch {  viewModel.sheetState!!.show() } }
                         .padding(top = 50.dp)
                         .size(150.dp)
                         .clip(CircleShape))
@@ -80,7 +75,7 @@ fun SetRegistrationScreen(navController: NavController, viewModel: RegistrationV
                     contentDescription = "image",
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
-                        .clickable { scope!!.launch { sheetState!!.show() } }
+                        .clickable {  viewModel.scope!!.launch {  viewModel.sheetState!!.show() } }
                         .padding(top = 50.dp)
                         .size(150.dp)
                         .clip(CircleShape))
@@ -142,9 +137,9 @@ fun SetRegistrationScreen(navController: NavController, viewModel: RegistrationV
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun UserImageBottomSheet(viewModel: RegistrationViewModel) {
-    key(fileName.value){
-        if(fileName.value!=0){
-            viewModel.GetFileFromDrawable(fileName.value!!)
+    key( viewModel.fileName.value){
+        if( viewModel.fileName.value!=0){
+            viewModel.GetFileFromDrawable( viewModel.fileName.value!!)
         }
     }
 
@@ -155,26 +150,26 @@ fun UserImageBottomSheet(viewModel: RegistrationViewModel) {
    verticalArrangement = Arrangement.SpaceAround,
    horizontalAlignment = Alignment.CenterHorizontally) {
        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceAround){
-           ImageItemForBottomSheet(R.drawable.avatar11)
-           ImageItemForBottomSheet(R.drawable.avatar11)
-           ImageItemForBottomSheet(R.drawable.avatar2)
+           ImageItemForBottomSheet(R.drawable.avatar11, viewModel)
+           ImageItemForBottomSheet(R.drawable.avatar11, viewModel)
+           ImageItemForBottomSheet(R.drawable.avatar2, viewModel)
        }
        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceAround){
-           ImageItemForBottomSheet(R.drawable.avatar3)
-           ImageItemForBottomSheet(R.drawable.avatar4)
-           ImageItemForBottomSheet(R.drawable.avatar5)
+           ImageItemForBottomSheet(R.drawable.avatar3, viewModel)
+           ImageItemForBottomSheet(R.drawable.avatar4, viewModel)
+           ImageItemForBottomSheet(R.drawable.avatar5, viewModel)
        }
        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceAround){
-           ImageItemForBottomSheet(R.drawable.avatar6)
-           ImageItemForBottomSheet(R.drawable.universal1)
-           ImageItemForBottomSheet(R.drawable.univarsal2)
+           ImageItemForBottomSheet(R.drawable.avatar6, viewModel)
+           ImageItemForBottomSheet(R.drawable.universal1, viewModel)
+           ImageItemForBottomSheet(R.drawable.univarsal2, viewModel)
        }
    }
 }
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun ImageItemForBottomSheet(image : kotlin.Int){
+fun ImageItemForBottomSheet(image : kotlin.Int, viewModel: RegistrationViewModel){
     Image(
         painter = painterResource(image),
         contentDescription = "image",
@@ -183,8 +178,8 @@ fun ImageItemForBottomSheet(image : kotlin.Int){
             .padding(15.dp)
             .size(90.dp)
             .clip(CircleShape)
-            .clickable { fileName.value = image
-                scope!!.launch { sheetState!!.hide() }}
+            .clickable {  viewModel.fileName.value = image
+                viewModel.scope!!.launch {  viewModel.sheetState!!.hide() }}
             .border(2.dp, colorResource(R.color.brown), CircleShape))
 }
 

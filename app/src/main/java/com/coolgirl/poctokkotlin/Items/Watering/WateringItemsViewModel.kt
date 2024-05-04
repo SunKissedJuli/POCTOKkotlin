@@ -4,9 +4,11 @@ import android.util.Log
 import androidx.compose.runtime.*
 import androidx.lifecycle.ViewModel
 import com.coolgirl.poctokkotlin.*
-import com.coolgirl.poctokkotlin.Models.*
-import com.coolgirl.poctokkotlin.Common.di.ApiClient
-import com.coolgirl.poctokkotlin.api.ApiController
+import com.coolgirl.poctokkotlin.data.dto.Plant
+import com.coolgirl.poctokkotlin.data.dto.WateringHistoryAdd
+import com.coolgirl.poctokkotlin.data.dto.WateringSchedule
+import com.coolgirl.poctokkotlin.data.dto.WateringScheduleAdd
+import com.coolgirl.poctokkotlin.di.ApiClient
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -37,14 +39,11 @@ class WateringItemsViewModel : ViewModel() {
             plant!!.wateringSchedule = WateringSchedule(plant.plantid, GetUser()!!.userid,shedule,0,
                 GetPlantFor() )
         }
-      //  plant.user = GetUserFor()
         SetPlant(plant)
     }
 
     fun UpdateShedule(plantId: Int){
         var wateringShedule = WateringScheduleAdd(plantId, GetUser()!!.userid, shedule)
-       // var apiClient = ApiClient.start().create(ApiController::class.java)
-      //  val call: Call<Plant> = apiClient.postWateringShedule(wateringShedule)
         val call: Call<Plant> = ApiClient().postWateringShedule(wateringShedule)
         call.enqueue(object : Callback<Plant> {
             override fun onResponse(call: Call<Plant>, response: Response<Plant>) {

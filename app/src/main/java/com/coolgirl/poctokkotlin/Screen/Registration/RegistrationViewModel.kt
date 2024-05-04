@@ -2,21 +2,23 @@ package com.coolgirl.poctokkotlin.Screen.Registration
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
-import com.coolgirl.poctokkotlin.Common.EncodeImage
-import com.coolgirl.poctokkotlin.Common.getResourceNameFromDrawableString
+import com.coolgirl.poctokkotlin.commons.EncodeImage
+import com.coolgirl.poctokkotlin.commons.getResourceNameFromDrawableString
 import com.coolgirl.poctokkotlin.GetUser
-import com.coolgirl.poctokkotlin.Models.UserLoginDataResponse
-import com.coolgirl.poctokkotlin.SetLoginData
+import com.coolgirl.poctokkotlin.data.dto.UserLoginDataResponse
 import com.coolgirl.poctokkotlin.SetUser
-import com.coolgirl.poctokkotlin.Common.di.ApiClient
-import com.coolgirl.poctokkotlin.api.ApiController
+import com.coolgirl.poctokkotlin.commons.UserDataStore
+import com.coolgirl.poctokkotlin.di.ApiClient
 import com.coolgirl.poctokkotlin.navigate.Screen
 import id.zelory.compressor.Compressor
 import id.zelory.compressor.constraint.default
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
@@ -26,10 +28,13 @@ import java.io.FileOutputStream
 
 
 class RegistrationViewModel : ViewModel() {
-
     var userNickname by mutableStateOf("")
     var userDescription by mutableStateOf("")
     var userImage by mutableStateOf("")
+    val fileName = mutableStateOf(0)
+    @OptIn(ExperimentalMaterialApi::class)
+    var sheetState: ModalBottomSheetState? = null
+    var scope: CoroutineScope? = null
 
     fun UpdateUserNickname(nickname: String) { userNickname = nickname }
     fun UpdateUserDescription(description : String) { userDescription = description }
@@ -49,7 +54,7 @@ class RegistrationViewModel : ViewModel() {
             override fun onResponse(call: Call<UserLoginDataResponse>, response: Response<UserLoginDataResponse>) {
                 if(response.code()==200){
                     response.body()?.let { SetUser(it) }
-                    response.body()?.let { SetLoginData(it) }
+                    response.body()?.let { UserDataStore.SetLoginData(it) }
                     navController.navigate(Screen.UserPage.user_id(response.body()!!.userid))
                 }
             }

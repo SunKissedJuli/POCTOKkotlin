@@ -10,22 +10,24 @@ import android.provider.OpenableColumns
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavHostController
-import com.coolgirl.poctokkotlin.Common.EncodeImage
-import com.coolgirl.poctokkotlin.Common.getResourceNameFromDrawableString
+import com.coolgirl.poctokkotlin.commons.EncodeImage
+import com.coolgirl.poctokkotlin.commons.getResourceNameFromDrawableString
 import com.coolgirl.poctokkotlin.GetNote
 import com.coolgirl.poctokkotlin.GetUser
-import com.coolgirl.poctokkotlin.Models.UserLoginDataResponse
+import com.coolgirl.poctokkotlin.data.dto.UserLoginDataResponse
 import com.coolgirl.poctokkotlin.SetNote
 import com.coolgirl.poctokkotlin.SetUser
-import com.coolgirl.poctokkotlin.Common.di.ApiClient
-import com.coolgirl.poctokkotlin.api.ApiController
+import com.coolgirl.poctokkotlin.di.ApiClient
 import com.coolgirl.poctokkotlin.navigate.Screen
 import id.zelory.compressor.Compressor
 import id.zelory.compressor.constraint.default
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
@@ -39,6 +41,10 @@ class ImageChoiceViewModel : ViewModel() {
     var newImage : File? = null
     var whatItIs : String? = null
     var go by mutableStateOf("")
+    @OptIn(ExperimentalMaterialApi::class)
+    var sheetState: ModalBottomSheetState? = null
+    var scope: CoroutineScope? = null
+    val fileName = mutableStateOf(0)
 
     @SuppressLint("Range", "SuspiciousIndentation")
     @Composable

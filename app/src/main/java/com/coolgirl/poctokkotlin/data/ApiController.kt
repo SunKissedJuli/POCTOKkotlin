@@ -1,5 +1,5 @@
-package com.coolgirl.poctokkotlin.api
-import com.coolgirl.poctokkotlin.Models.*
+package com.coolgirl.poctokkotlin.data
+import com.coolgirl.poctokkotlin.data.dto.*
 import retrofit2.Call
 import retrofit2.http.*
 

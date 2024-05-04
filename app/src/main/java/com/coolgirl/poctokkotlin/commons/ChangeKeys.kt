@@ -1,4 +1,4 @@
-package com.coolgirl.poctokkotlin.Common
+package com.coolgirl.poctokkotlin.commons
 
 import kotlin.random.Random
 

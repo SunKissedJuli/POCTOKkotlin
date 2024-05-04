@@ -4,13 +4,16 @@ import android.os.Bundle
 import android.view.KeyEvent
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.navigation.compose.rememberNavController
-import com.coolgirl.poctokkotlin.navigate.AppNavHost
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.platform.LocalContext
+import androidx.datastore.preferences.createDataStore
+import com.coolgirl.poctokkotlin.commons.UserDataStore
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
+            UserDataStore.InitDataStore(LocalContext.current.createDataStore(name = "user_data_store"), rememberCoroutineScope())
             IsAutorize()
             }
         }
