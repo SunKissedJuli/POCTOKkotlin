@@ -26,6 +26,7 @@ import com.coolgirl.poctokkotlin.commons.DecodeImage
 import com.coolgirl.poctokkotlin.commons.LoadNotesStatus
 import com.coolgirl.poctokkotlin.Items.SpinnerSample
 import com.coolgirl.poctokkotlin.R
+import com.coolgirl.poctokkotlin.commons.plantApiPath
 import com.coolgirl.poctokkotlin.navigate.Screen
 import kotlinx.coroutines.launch
 
@@ -89,7 +90,7 @@ fun SetNoteHead(navController: NavHostController, noteData : String, viewModel: 
 fun SetNoteImage(bitmap : String?, viewModel: NoteViewModel){
     if(viewModel.IsOldImage()){
         Image(
-            painter = rememberImagePainter("http://45.154.1.94" + bitmap!!),
+            painter = rememberImagePainter(plantApiPath + bitmap!!),
             contentDescription = "image",
             modifier = Modifier.fillMaxWidth().fillMaxHeight(0.4f))
     }else{

@@ -22,6 +22,7 @@ import androidx.navigation.NavHostController
 import coil.compose.rememberImagePainter
 import com.coolgirl.poctokkotlin.GetUser
 import com.coolgirl.poctokkotlin.R
+import com.coolgirl.poctokkotlin.commons.plantApiPath
 import com.coolgirl.poctokkotlin.navigate.Screen
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -101,7 +102,7 @@ fun BottomSheet(navController: NavHostController, userId: Int, scope: CoroutineS
             fontWeight = FontWeight.ExtraBold)
 
         var userIcon : String? = null
-        userIcon = GetUser()?.userimage?.let { "http://45.154.1.94" + it }
+        userIcon = GetUser()?.userimage?.let { plantApiPath + it }
         Image(
             painter = rememberImagePainter(userIcon ?: R.drawable.user_icon),
             contentDescription = "image",

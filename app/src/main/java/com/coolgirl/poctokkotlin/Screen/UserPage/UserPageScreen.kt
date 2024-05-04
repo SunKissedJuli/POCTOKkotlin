@@ -30,6 +30,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.runtime.*
 import com.coolgirl.poctokkotlin.commons.LoadNotesStatus
 import com.coolgirl.poctokkotlin.Items.*
+import com.coolgirl.poctokkotlin.commons.plantApiPath
 import com.coolgirl.poctokkotlin.navigate.Screen
 import kotlin.math.min
 import java.util.*
@@ -105,7 +106,7 @@ fun SetUserHead(viewModel: UserPageViewModel, navController: NavHostController) 
             verticalArrangement = Arrangement.Center
         ) {
             var userIcon : String? = null
-            userIcon = viewModel.user?.userimage?.let { "http://45.154.1.94" + it }
+            userIcon = viewModel.user?.userimage?.let { plantApiPath + it }
             Image(
                 painter = rememberImagePainter(userIcon ?: R.drawable.user_icon),
                 contentDescription = "image",
@@ -193,7 +194,6 @@ fun PhotoList(viewModel: UserPageViewModel, photoList: List<Notes?>?, navControl
     if (viewModel.WhatItIs().equals("photos")) {
         if (photoList != null && photoList.isNotEmpty()) {
             val columnItems: Int = ((photoList.size).toFloat() / 3).roundToInt()+1
-            Log.d("tag", "хуй columnItems = " + columnItems)
             LazyColumn(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier
@@ -202,13 +202,12 @@ fun PhotoList(viewModel: UserPageViewModel, photoList: List<Notes?>?, navControl
                     .background(colorResource(R.color.blue))
             ) {
                 items(columnItems) { columnIndex ->
-                    Log.d("tag", "хуй columnIndex = " + columnIndex)
                     Row(modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.Start) {
                         for (rowIndex in 0 until min(3, photoList.size - columnIndex * 3)) {
                             val currentIndex = columnIndex * 3 + rowIndex
                             Image(
-                                painter = rememberImagePainter("http://45.154.1.94" + (photoList[currentIndex]!!.image)),
+                                painter = rememberImagePainter(plantApiPath + (photoList[currentIndex]!!.image)),
                                 contentDescription = "image",
                                 contentScale = ContentScale.Crop,
                                 modifier = Modifier

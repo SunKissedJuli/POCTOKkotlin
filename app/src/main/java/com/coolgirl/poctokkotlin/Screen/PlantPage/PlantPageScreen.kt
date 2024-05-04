@@ -27,6 +27,7 @@ import com.coolgirl.poctokkotlin.data.dto.Notes
 import com.coolgirl.poctokkotlin.data.dto.WateringHistory
 import com.coolgirl.poctokkotlin.R
 import com.coolgirl.poctokkotlin.Screen.UserPage.*
+import com.coolgirl.poctokkotlin.commons.plantApiPath
 import com.coolgirl.poctokkotlin.navigate.Screen
 import kotlinx.coroutines.launch
 import kotlin.math.min
@@ -100,7 +101,7 @@ fun SetPlantHead(viewModel: PlantPageViewModel) {
             verticalArrangement = Arrangement.Center
         ) {
             var plantIcon : String? = null
-            plantIcon = GetPlant()?.plantimage?.let { "http://45.154.1.94" + it }
+            plantIcon = GetPlant()?.plantimage?.let { plantApiPath + it }
             Image(
                 painter = rememberImagePainter(plantIcon ?: R.drawable.plant_icon),
                 contentDescription = "image",
@@ -205,7 +206,7 @@ fun PhotoList(viewModel: PlantPageViewModel, photoList: List<Notes?>?, navContro
                         for (rowIndex in 0 until min(3, photoList.size - columnIndex * 3)) {
                             val currentIndex = columnIndex * 3 + rowIndex
                             Image(
-                                painter = rememberImagePainter("http://45.154.1.94" + (photoList[currentIndex]!!.image)),
+                                painter = rememberImagePainter(plantApiPath + (photoList[currentIndex]!!.image)),
                                 contentDescription = "image",
                                 contentScale = ContentScale.Crop,
                                 modifier = Modifier

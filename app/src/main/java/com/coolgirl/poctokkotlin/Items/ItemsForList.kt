@@ -32,6 +32,7 @@ import coil.compose.rememberImagePainter
 import com.coolgirl.poctokkotlin.GetPlant
 import com.coolgirl.poctokkotlin.Items.Watering.WateringItemsViewModel
 import com.coolgirl.poctokkotlin.R
+import com.coolgirl.poctokkotlin.commons.plantApiPath
 import com.coolgirl.poctokkotlin.navigate.Screen
 import java.net.URI
 import java.util.*
@@ -68,7 +69,7 @@ fun PlantItem(plantName : String?, plantDescription : String?, plantImage : Stri
         Alignment.CenterVertically) {
         var plantIcon : String? = null
         if(plantImage!=null&&!plantImage.equals("")&&!plantImage.equals(" ")){
-            plantIcon = plantImage?.let { "http://45.154.1.94" + it }
+            plantIcon = plantImage?.let { plantApiPath + it }
         }
         Image(
             painter = rememberImagePainter( plantIcon ?: R.drawable.plant_icon),
