@@ -55,8 +55,7 @@ fun ImageChoiceScreen(navController: NavHostController, whatItIs : String) {
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun SetImageChoiceScreen(
-    navController: NavHostController, viewModel: ImageChoiceViewModel,
-    launcher: ManagedActivityResultLauncher<String, Uri?> = viewModel.OpenGalery(navController)){
+    navController: NavHostController, viewModel: ImageChoiceViewModel, launcher: ManagedActivityResultLauncher<String, Uri?> = viewModel.OpenGalery(navController)){
     Column(modifier = Modifier.fillMaxSize()) {
         Row(modifier = Modifier
             .fillMaxWidth()
@@ -69,7 +68,7 @@ fun SetImageChoiceScreen(
                 color = colorResource(R.color.brown),
                 modifier = Modifier
                     .clickable {
-                        //дописать навигацию назад
+                       viewModel.GoBack(navController)
                     }
                     .padding(end = 30.dp, start = 10.dp))
             Text(text = "Выбор изображения",

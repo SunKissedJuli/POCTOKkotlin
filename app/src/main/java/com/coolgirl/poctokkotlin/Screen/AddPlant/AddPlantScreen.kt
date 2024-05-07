@@ -189,7 +189,7 @@ fun PlantImageBottomSheet(viewModel: AddPlantViewModel) {
         verticalArrangement = Arrangement.SpaceAround,
         horizontalAlignment = Alignment.CenterHorizontally) {
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceAround){
-            ImageGaleryItemForPlantBottomSheet(R.drawable.plant1, viewModel)
+            ImageGaleryItemForPlantBottomSheet(R.drawable.galery_icon, viewModel)
             ImageItemForPlantBottomSheet(R.drawable.plant1, viewModel)
             ImageItemForPlantBottomSheet(R.drawable.plant2, viewModel)
         }

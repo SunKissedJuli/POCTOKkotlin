@@ -23,6 +23,7 @@ import com.coolgirl.poctokkotlin.GetUser
 import com.coolgirl.poctokkotlin.data.dto.UserLoginDataResponse
 import com.coolgirl.poctokkotlin.SetNote
 import com.coolgirl.poctokkotlin.SetUser
+import com.coolgirl.poctokkotlin.commons.copyStreamToFile
 import com.coolgirl.poctokkotlin.di.ApiClient
 import com.coolgirl.poctokkotlin.navigate.Screen
 import id.zelory.compressor.Compressor
@@ -82,28 +83,12 @@ class ImageChoiceViewModel : ViewModel() {
                         }
                     }
                 }
-
             }finally { cursor!!.close() }
         }
-        if (file != null && file != newImage) {
-            newImage = file
-        }
+       // if (file != null && file != newImage) {
+       //     newImage = file
+       // }
         return launcher
-    }
-
-    fun copyStreamToFile(inputStream: InputStream, outputFile: File) {
-        inputStream.use { input ->
-            val outputStream = FileOutputStream(outputFile)
-            outputStream.use { output ->
-                val buffer = ByteArray(4 * 1024) // buffer size
-                while (true) {
-                    val byteCount = input.read(buffer)
-                    if (byteCount < 0) break
-                    output.write(buffer, 0, byteCount)
-                }
-                output.flush()
-            }
-        }
     }
 
     fun PutUserImage(userIcon : String){
@@ -156,6 +141,13 @@ class ImageChoiceViewModel : ViewModel() {
                     }
                 }
             }
+        }
+    }
+
+    fun GoBack(navController: NavHostController){
+        when(whatItIs){
+            "note" -> navController.navigate(Screen.Note.note_id(GetNote()!!.noteid))
+            "user_page" -> navController.navigate(Screen.UserPage.user_id(GetUser()!!.userid))
         }
     }
 

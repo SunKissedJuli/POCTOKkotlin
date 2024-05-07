@@ -1,5 +1,7 @@
 package com.coolgirl.poctokkotlin.Screen
 
+import android.net.Uri
+import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -150,7 +152,7 @@ fun UserImageBottomSheet(viewModel: RegistrationViewModel) {
    verticalArrangement = Arrangement.SpaceAround,
    horizontalAlignment = Alignment.CenterHorizontally) {
        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceAround){
-           ImageItemForBottomSheet(R.drawable.avatar11, viewModel)
+           ImageGaleryItemForBottomSheet(R.drawable.galery_icon, viewModel)
            ImageItemForBottomSheet(R.drawable.avatar11, viewModel)
            ImageItemForBottomSheet(R.drawable.avatar2, viewModel)
        }
@@ -179,6 +181,24 @@ fun ImageItemForBottomSheet(image : kotlin.Int, viewModel: RegistrationViewModel
             .size(90.dp)
             .clip(CircleShape)
             .clickable {  viewModel.fileName.value = image
+                viewModel.scope!!.launch {  viewModel.sheetState!!.hide() }}
+            .border(2.dp, colorResource(R.color.brown), CircleShape))
+}
+
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+fun ImageGaleryItemForBottomSheet(image : kotlin.Int, viewModel: RegistrationViewModel,  launcher: ManagedActivityResultLauncher<String, Uri?> = viewModel.OpenGalery()){
+    Image(
+        painter = painterResource(image),
+        contentDescription = "image",
+        contentScale = ContentScale.Crop,
+        modifier = Modifier
+            .padding(15.dp)
+            .size(90.dp)
+            .clip(CircleShape)
+            .clickable {
+                launcher.launch("image/*")
+                viewModel.fileName.value = image
                 viewModel.scope!!.launch {  viewModel.sheetState!!.hide() }}
             .border(2.dp, colorResource(R.color.brown), CircleShape))
 }

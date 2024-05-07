@@ -1,7 +1,15 @@
 package com.coolgirl.poctokkotlin.Screen.Registration
 
+import android.annotation.SuppressLint
+import android.content.Context
+import android.database.Cursor
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.net.Uri
+import android.provider.OpenableColumns
+import androidx.activity.compose.ManagedActivityResultLauncher
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.runtime.*
@@ -14,6 +22,7 @@ import com.coolgirl.poctokkotlin.GetUser
 import com.coolgirl.poctokkotlin.data.dto.UserLoginDataResponse
 import com.coolgirl.poctokkotlin.SetUser
 import com.coolgirl.poctokkotlin.commons.UserDataStore
+import com.coolgirl.poctokkotlin.commons.copyStreamToFile
 import com.coolgirl.poctokkotlin.di.ApiClient
 import com.coolgirl.poctokkotlin.navigate.Screen
 import id.zelory.compressor.Compressor
@@ -25,6 +34,7 @@ import retrofit2.Callback
 import retrofit2.Response
 import java.io.File
 import java.io.FileOutputStream
+import java.io.InputStream
 
 
 class RegistrationViewModel : ViewModel() {
@@ -84,5 +94,32 @@ class RegistrationViewModel : ViewModel() {
                 userImage = EncodeImage(file!!.path)
             }
         }
+    }
+
+    @SuppressLint("Range", "SuspiciousIndentation")
+    @Composable
+    fun OpenGalery(context: Context = LocalContext.current): ManagedActivityResultLauncher<String, Uri?> {
+        var file by remember { mutableStateOf<File?>(null) }
+        val coroutineScope = rememberCoroutineScope()
+        val launcher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+            val cursor: Cursor? = context.getContentResolver().query(uri!!, null, null, null, null)
+            try {
+                if (cursor != null && cursor.moveToFirst()) {
+                    var fileName = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME))
+                    val iStream : InputStream = context.contentResolver.openInputStream(uri!!)!!
+                    val outputDir : File = context.cacheDir
+                    val outputFile : File = File(outputDir,fileName)
+                    copyStreamToFile(iStream, outputFile)
+                    iStream.close()
+                    coroutineScope.launch() {
+                        file = Compressor.compress(context, outputFile!!) {
+                            default(width = 50, format = Bitmap.CompressFormat.JPEG) }
+                      userImage = EncodeImage(file!!.path)
+                    }
+                }
+
+            }finally { cursor!!.close() }
+        }
+        return launcher
     }
 }

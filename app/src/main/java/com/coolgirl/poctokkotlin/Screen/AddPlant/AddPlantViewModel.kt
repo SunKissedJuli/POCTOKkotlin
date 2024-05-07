@@ -19,6 +19,7 @@ import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
 import com.coolgirl.poctokkotlin.*
 import com.coolgirl.poctokkotlin.commons.EncodeImage
+import com.coolgirl.poctokkotlin.commons.copyStreamToFile
 import com.coolgirl.poctokkotlin.data.dto.Plant
 import com.coolgirl.poctokkotlin.data.dto.WateringSchedule
 import com.coolgirl.poctokkotlin.di.ApiClient
@@ -127,7 +128,6 @@ class AddPlantViewModel : ViewModel() {
                     coroutineScope.launch() {
                         file = Compressor.compress(context, outputFile!!) {
                             default(width = 50, format = Bitmap.CompressFormat.JPEG) }
-                     //   plantImage = EncodeImage(file!!.path)
                         IdentificatePlant(EncodeImage(file!!.path))
                     }
                 }
@@ -137,34 +137,16 @@ class AddPlantViewModel : ViewModel() {
         return launcher
     }
 
-    fun copyStreamToFile(inputStream: InputStream, outputFile: File) {
-        inputStream.use { input ->
-            val outputStream = FileOutputStream(outputFile)
-            outputStream.use { output ->
-                val buffer = ByteArray(4 * 1024) // buffer size
-                while (true) {
-                    val byteCount = input.read(buffer)
-                    if (byteCount < 0) break
-                    output.write(buffer, 0, byteCount)
-                }
-                output.flush()
-            }
-        }
-    }
-
     fun IdentificatePlant(encodeImage: String) {
         var list: MutableList<String>? = mutableListOf()
         list?.add("data:image/jpg;base64," + encodeImage)
         var plant = list?.let { PlantIdentification(it) }
-        Log.d("tag","хуй plant= " + plant.toString())
         val call: Call<PlantIdentificationResponse> = PlantIdApiClient().IdentityPlantForPhoto(plant!!)
         call.enqueue(object : Callback<PlantIdentificationResponse> {
             override fun onResponse(call: Call<PlantIdentificationResponse>, response: Response<PlantIdentificationResponse>) {
                 if(response.code()==200||response.code()==201) {
-                    var plantIdentificationResponse = response.body()
                     if(response.body()!!.result.is_plant.binary){
                         var suggestions = response.body()!!.result.classification.suggestions.get(0)
-                        Log.d("tag","хуй suggestions = " + suggestions)
                         plantNickname = suggestions.details.common_names?.get(0) ?: plantNickname
                     }else{
                         //вывод сообщения о том, что это не растение
