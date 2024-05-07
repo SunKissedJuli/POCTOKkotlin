@@ -1,6 +1,7 @@
 package com.coolgirl.poctokkotlin.di
 
 import com.coolgirl.poctokkotlin.commons.plantApiPath
+import com.coolgirl.poctokkotlin.commons.plantIdApiPath
 import com.coolgirl.poctokkotlin.data.ApiController
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
@@ -31,11 +32,20 @@ fun ApiClient(): ApiController {
 }
 
 fun PlantIdApiClient(): ApiController {
-    val interseptor = HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY);
-    val client = OkHttpClient.Builder().addInterceptor(interseptor).build()
+    val interceptor = Interceptor { chain ->
+        val request = chain.request().newBuilder()
+            .addHeader("Accept", "application/json")
+            .build()
+        chain.proceed(request)
+    }
+
+    val client = OkHttpClient.Builder()
+        .addInterceptor(interceptor)
+        .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
+        .build()
 
     return Retrofit.Builder()
-        .baseUrl(plantApiPath + "/")
+        .baseUrl(plantIdApiPath)
         .client(client)
         .addConverterFactory(GsonConverterFactory.create())
         .build()

@@ -1,7 +1,16 @@
 package com.coolgirl.poctokkotlin.Screen.AddPlant
 
+import android.annotation.SuppressLint
+import android.content.Context
+import android.database.Cursor
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.net.Uri
+import android.provider.OpenableColumns
+import android.util.Log
+import androidx.activity.compose.ManagedActivityResultLauncher
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.runtime.*
@@ -14,6 +23,9 @@ import com.coolgirl.poctokkotlin.data.dto.Plant
 import com.coolgirl.poctokkotlin.data.dto.WateringSchedule
 import com.coolgirl.poctokkotlin.di.ApiClient
 import com.coolgirl.poctokkotlin.commons.getResourceNameFromDrawableString
+import com.coolgirl.poctokkotlin.data.dto.PlantIdentification
+import com.coolgirl.poctokkotlin.data.dto.PlantIdentificationResponse
+import com.coolgirl.poctokkotlin.di.PlantIdApiClient
 import com.coolgirl.poctokkotlin.navigate.Screen
 import id.zelory.compressor.Compressor
 import id.zelory.compressor.constraint.default
@@ -24,6 +36,7 @@ import retrofit2.Callback
 import retrofit2.Response
 import java.io.File
 import java.io.FileOutputStream
+import java.io.InputStream
 
 class AddPlantViewModel : ViewModel() {
     var plantNickname by mutableStateOf("")
@@ -94,5 +107,74 @@ class AddPlantViewModel : ViewModel() {
                 plantImage = EncodeImage(file!!.path)
             }
         }
+    }
+
+    @SuppressLint("Range", "SuspiciousIndentation")
+    @Composable
+    fun OpenGalery(context: Context = LocalContext.current): ManagedActivityResultLauncher<String, Uri?> {
+        var file by remember { mutableStateOf<File?>(null) }
+        val coroutineScope = rememberCoroutineScope()
+        val launcher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+            val cursor: Cursor? = context.getContentResolver().query(uri!!, null, null, null, null)
+            try {
+                if (cursor != null && cursor.moveToFirst()) {
+                    var fileName = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME))
+                    val iStream : InputStream = context.contentResolver.openInputStream(uri!!)!!
+                    val outputDir : File = context.cacheDir
+                    val outputFile : File = File(outputDir,fileName)
+                    copyStreamToFile(iStream, outputFile)
+                    iStream.close()
+                    coroutineScope.launch() {
+                        file = Compressor.compress(context, outputFile!!) {
+                            default(width = 50, format = Bitmap.CompressFormat.JPEG) }
+                     //   plantImage = EncodeImage(file!!.path)
+                        IdentificatePlant(EncodeImage(file!!.path))
+                    }
+                }
+
+            }finally { cursor!!.close() }
+        }
+        return launcher
+    }
+
+    fun copyStreamToFile(inputStream: InputStream, outputFile: File) {
+        inputStream.use { input ->
+            val outputStream = FileOutputStream(outputFile)
+            outputStream.use { output ->
+                val buffer = ByteArray(4 * 1024) // buffer size
+                while (true) {
+                    val byteCount = input.read(buffer)
+                    if (byteCount < 0) break
+                    output.write(buffer, 0, byteCount)
+                }
+                output.flush()
+            }
+        }
+    }
+
+    fun IdentificatePlant(encodeImage: String) {
+        var list: MutableList<String>? = mutableListOf()
+        list?.add("data:image/jpg;base64," + encodeImage)
+        var plant = list?.let { PlantIdentification(it) }
+        Log.d("tag","хуй plant= " + plant.toString())
+        val call: Call<PlantIdentificationResponse> = PlantIdApiClient().IdentityPlantForPhoto(plant!!)
+        call.enqueue(object : Callback<PlantIdentificationResponse> {
+            override fun onResponse(call: Call<PlantIdentificationResponse>, response: Response<PlantIdentificationResponse>) {
+                if(response.code()==200||response.code()==201) {
+                    var plantIdentificationResponse = response.body()
+                    if(response.body()!!.result.is_plant.binary){
+                        var suggestions = response.body()!!.result.classification.suggestions.get(0)
+                        Log.d("tag","хуй suggestions = " + suggestions)
+                        plantNickname = suggestions.details.common_names?.get(0) ?: plantNickname
+                    }else{
+                        //вывод сообщения о том, что это не растение
+                    }
+                    plantImage = encodeImage
+                }
+
+            }
+            override fun onFailure(call: Call<PlantIdentificationResponse>, t: Throwable) {
+                Log.d("tag","хуй response " + t.message)
+            } })
     }
 }

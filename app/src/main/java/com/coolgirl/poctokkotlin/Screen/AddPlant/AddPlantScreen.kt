@@ -1,5 +1,7 @@
 package com.coolgirl.poctokkotlin.Screen.AddPlant
 
+import android.net.Uri
+import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -187,7 +189,7 @@ fun PlantImageBottomSheet(viewModel: AddPlantViewModel) {
         verticalArrangement = Arrangement.SpaceAround,
         horizontalAlignment = Alignment.CenterHorizontally) {
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceAround){
-            ImageItemForPlantBottomSheet(R.drawable.plant1, viewModel)
+            ImageGaleryItemForPlantBottomSheet(R.drawable.plant1, viewModel)
             ImageItemForPlantBottomSheet(R.drawable.plant1, viewModel)
             ImageItemForPlantBottomSheet(R.drawable.plant2, viewModel)
         }
@@ -196,7 +198,9 @@ fun PlantImageBottomSheet(viewModel: AddPlantViewModel) {
             ImageItemForPlantBottomSheet(R.drawable.plant_icon, viewModel)
             ImageItemForPlantBottomSheet(R.drawable.universal1, viewModel)
         }
-        Row(modifier = Modifier.fillMaxWidth().padding(start = 20.dp), horizontalArrangement = Arrangement.Start){
+        Row(modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 20.dp), horizontalArrangement = Arrangement.Start){
             ImageItemForPlantBottomSheet(R.drawable.univarsal2, viewModel)
         }
     }
@@ -213,7 +217,28 @@ fun ImageItemForPlantBottomSheet(image : kotlin.Int, viewModel: AddPlantViewMode
             .padding(15.dp)
             .size(90.dp)
             .clip(CircleShape)
-            .clickable { viewModel.fileName.value = image
-                viewModel.scope!!.launch { viewModel.sheetState!!.hide() }}
+            .clickable {
+                viewModel.fileName.value = image
+                viewModel.scope!!.launch { viewModel.sheetState!!.hide() }
+            }
+            .border(2.dp, colorResource(R.color.brown), CircleShape))
+}
+
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+fun ImageGaleryItemForPlantBottomSheet(image : kotlin.Int, viewModel: AddPlantViewModel, launcher: ManagedActivityResultLauncher<String, Uri?> = viewModel.OpenGalery()){
+    Image(
+        painter = painterResource(image),
+        contentDescription = "image",
+        contentScale = ContentScale.Crop,
+        modifier = Modifier
+            .padding(15.dp)
+            .size(90.dp)
+            .clip(CircleShape)
+            .clickable {
+                launcher.launch("image/*")
+                viewModel.fileName.value = image
+                viewModel.scope!!.launch { viewModel.sheetState!!.hide() }
+            }
             .border(2.dp, colorResource(R.color.brown), CircleShape))
 }

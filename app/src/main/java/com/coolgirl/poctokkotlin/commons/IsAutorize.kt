@@ -10,8 +10,6 @@ import com.coolgirl.poctokkotlin.navigate.AppNavHost
 import com.coolgirl.poctokkotlin.navigate.Screen
 import kotlinx.coroutines.launch
 
-private var change by mutableStateOf("")
-
 @Composable
 fun IsAutorize() {
     val userDataStore = UserDataStore.GetDataStore()

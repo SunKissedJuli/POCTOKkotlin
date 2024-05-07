@@ -1,4 +1,5 @@
 package com.coolgirl.poctokkotlin.data
+import com.coolgirl.poctokkotlin.commons.plantIdApiToken
 import com.coolgirl.poctokkotlin.data.dto.*
 import retrofit2.Call
 import retrofit2.http.*
@@ -32,4 +33,7 @@ interface ApiController {
     @PUT("user/postplant")
     fun postPlant(@Body plant: Plant?): Call<Plant>
 
+    @Headers("Api-Key: " + plantIdApiToken, "Content-Type: application/json" )
+    @POST("identification")
+    fun IdentityPlantForPhoto(@Body plant: PlantIdentification, @Query("details") common: String = "common_names", @Query("language") language: String = "ru"): Call<PlantIdentificationResponse>
 }
