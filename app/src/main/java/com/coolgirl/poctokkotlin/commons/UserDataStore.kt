@@ -34,7 +34,6 @@ object UserDataStore{
                     }else{
                         set(UserScheme.IS_AUTORIZE,true)
                     }
-
                 }
             }
         }
