@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">POCTOKkotlin</string>
+    <string name="app_name">POCTOK</string>
     <string name="login_toRegister">ЕЩЁ НЕТ АККАУНТА?</string>
     <string name="login_toAutorize">УЖЕ ЕСТЬ АККАУНТ?</string>
     <string name="login_registration">РЕГИСТРАЦИЯ</string>

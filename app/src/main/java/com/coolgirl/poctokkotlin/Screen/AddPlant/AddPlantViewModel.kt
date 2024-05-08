@@ -30,6 +30,7 @@ import com.coolgirl.poctokkotlin.di.PlantIdApiClient
 import com.coolgirl.poctokkotlin.navigate.Screen
 import id.zelory.compressor.Compressor
 import id.zelory.compressor.constraint.default
+import id.zelory.compressor.constraint.quality
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import retrofit2.Call
@@ -127,7 +128,7 @@ class AddPlantViewModel : ViewModel() {
                     iStream.close()
                     coroutineScope.launch() {
                         file = Compressor.compress(context, outputFile!!) {
-                            default(width = 50, format = Bitmap.CompressFormat.JPEG) }
+                            default(width = 50, quality = 10, format = Bitmap.CompressFormat.JPEG) }
                         IdentificatePlant(EncodeImage(file!!.path))
                     }
                 }
@@ -147,9 +148,9 @@ class AddPlantViewModel : ViewModel() {
                 if(response.code()==200||response.code()==201) {
                     if(response.body()!!.result.is_plant.binary){
                         var suggestions = response.body()!!.result.classification.suggestions.get(0)
-                        plantNickname = suggestions.details.common_names?.get(0) ?: plantNickname
+                        UpdatePlantNickname(suggestions.details.common_names?.get(0) ?: plantNickname)
                     }else{
-                        //вывод сообщения о том, что это не растение
+                        UpdatePlantNickname("Это не растение")
                     }
                     plantImage = encodeImage
                 }

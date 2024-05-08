@@ -64,7 +64,8 @@ fun PlantItem(plantName : String?, plantDescription : String?, plantImage : Stri
     Row(modifier = Modifier
         .fillMaxWidth()
         .height(150.dp)
-        .background(colorResource(R.color.stone)),
+        .background(colorResource(R.color.stone))
+        .clickable { navController.navigate(Screen.PlantPage.plant_id(plantId!!)) },
         Arrangement.SpaceEvenly,
         Alignment.CenterVertically) {
         var plantIcon : String? = null
