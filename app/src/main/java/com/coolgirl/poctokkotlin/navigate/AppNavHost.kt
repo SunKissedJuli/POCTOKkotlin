@@ -7,6 +7,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.coolgirl.poctokkotlin.Screen.AddPlant.AddPlantScreen
+import com.coolgirl.poctokkotlin.Screen.EditUserData.EditUserDataScreen
 import com.coolgirl.poctokkotlin.Screen.ImageChoice.ImageChoiceScreen
 import com.coolgirl.poctokkotlin.Screen.Login.LoginScreen
 import com.coolgirl.poctokkotlin.Screen.Note.NoteScreen
@@ -73,6 +74,10 @@ fun AppNavHost(
 
         composable(Screen.Settings.route){
             SettingsScreen(navController)
+        }
+
+        composable(Screen.EditUser.route){
+            EditUserDataScreen(navController)
         }
 
         composable(Screen.WateringPage.route) {

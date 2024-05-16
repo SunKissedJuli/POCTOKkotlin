@@ -137,7 +137,7 @@ fun SetUserHead(viewModel: UserPageViewModel, navController: NavHostController) 
              viewModel.user?.userdescription?.let {
                  Text(text = it, softWrap = true, color = colorResource(R.color.brown), modifier = Modifier.padding(end = 10.dp, top=20.dp)) }
 
-            Button(onClick = { /*TODO*/ },
+            Button(onClick = { navController.navigate(Screen.Register.route) },
                 modifier = Modifier
                     .fillMaxWidth(0.7f)
                     .padding(top = 20.dp),

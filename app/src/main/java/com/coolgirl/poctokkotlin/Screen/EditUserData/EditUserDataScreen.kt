@@ -1,7 +1,6 @@
-package com.coolgirl.poctokkotlin.Screen
+package com.coolgirl.poctokkotlin.Screen.EditUserData
 
 import android.net.Uri
-import android.util.Log
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -29,17 +28,15 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.rememberImagePainter
-import com.coolgirl.poctokkotlin.commons.DecodeImage
 import com.coolgirl.poctokkotlin.R
 import com.coolgirl.poctokkotlin.Screen.Registration.RegistrationViewModel
-import com.coolgirl.poctokkotlin.Screen.UserPage.*
+import com.coolgirl.poctokkotlin.commons.DecodeImage
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun RegistrationScreen(navController: NavController){
-    var viewModel : RegistrationViewModel = viewModel()
-    viewModel.LoadData()
+fun EditUserDataScreen(navController: NavController) {
+    var viewModel : EditUserDataViewModel = viewModel()
     viewModel.sheetState = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden)
     viewModel.scope = rememberCoroutineScope()
     ModalBottomSheetLayout (
@@ -53,34 +50,21 @@ fun RegistrationScreen(navController: NavController){
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun SetRegistrationScreen(navController: NavController, viewModel: RegistrationViewModel){
+fun SetRegistrationScreen(navController: NavController, viewModel: EditUserDataViewModel){
     Column(modifier = Modifier
         .fillMaxSize()
         .background(colorResource(R.color.blue)), verticalArrangement = Arrangement.SpaceBetween, horizontalAlignment = Alignment.CenterHorizontally) {
 
         key(viewModel.userImage){
-            Log.d("asdf","хуй userImage = " + viewModel.userImage)
             if(viewModel.userImage!=null && !viewModel.userImage.equals("")){
-                if(viewModel.isEdit){
-                    Image( painter = rememberImagePainter(viewModel.userImage),
-                        contentDescription = "image",
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier
-                            .clickable {  viewModel.scope!!.launch {  viewModel.sheetState!!.show() } }
-                            .padding(top = 50.dp)
-                            .size(150.dp)
-                            .clip(CircleShape))
-                }else{
-                    Image( painter = rememberImagePainter(viewModel.userImage?.let { DecodeImage(it) }),
-                        contentDescription = "image",
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier
-                            .clickable {  viewModel.scope!!.launch {  viewModel.sheetState!!.show() } }
-                            .padding(top = 50.dp)
-                            .size(150.dp)
-                            .clip(CircleShape))
-                }
-
+                Image( painter = rememberImagePainter(viewModel.userImage?.let { DecodeImage(it) }),
+                    contentDescription = "image",
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .clickable {  viewModel.scope!!.launch {  viewModel.sheetState!!.show() } }
+                        .padding(top = 50.dp)
+                        .size(150.dp)
+                        .clip(CircleShape))
             }else{
                 Image(painter = painterResource(R.drawable.blueimage),
                     contentDescription = "image",
@@ -146,40 +130,40 @@ fun SetRegistrationScreen(navController: NavController, viewModel: RegistrationV
 }
 
 @Composable
-fun UserImageBottomSheet(viewModel: RegistrationViewModel) {
+fun UserImageBottomSheet(viewModel: EditUserDataViewModel) {
     key( viewModel.fileName.value){
         if( viewModel.fileName.value!=0){
             viewModel.GetFileFromDrawable( viewModel.fileName.value!!)
         }
     }
 
-   Column(modifier = Modifier
-       .fillMaxWidth()
-       .fillMaxHeight(0.5f)
-       .background(colorResource(R.color.stone)),
-   verticalArrangement = Arrangement.SpaceAround,
-   horizontalAlignment = Alignment.CenterHorizontally) {
-       Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceAround){
-           ImageGaleryItemForBottomSheet(R.drawable.galery_icon, viewModel)
-           ImageItemForBottomSheet(R.drawable.avatar11, viewModel)
-           ImageItemForBottomSheet(R.drawable.avatar2, viewModel)
-       }
-       Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceAround){
-           ImageItemForBottomSheet(R.drawable.avatar3, viewModel)
-           ImageItemForBottomSheet(R.drawable.avatar4, viewModel)
-           ImageItemForBottomSheet(R.drawable.avatar5, viewModel)
-       }
-       Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceAround){
-           ImageItemForBottomSheet(R.drawable.avatar6, viewModel)
-           ImageItemForBottomSheet(R.drawable.universal1, viewModel)
-           ImageItemForBottomSheet(R.drawable.univarsal2, viewModel)
-       }
-   }
+    Column(modifier = Modifier
+        .fillMaxWidth()
+        .fillMaxHeight(0.5f)
+        .background(colorResource(R.color.stone)),
+        verticalArrangement = Arrangement.SpaceAround,
+        horizontalAlignment = Alignment.CenterHorizontally) {
+        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceAround){
+            ImageGaleryItemForBottomSheet(R.drawable.galery_icon, viewModel)
+            ImageItemForBottomSheet(R.drawable.avatar11, viewModel)
+            ImageItemForBottomSheet(R.drawable.avatar2, viewModel)
+        }
+        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceAround){
+            ImageItemForBottomSheet(R.drawable.avatar3, viewModel)
+            ImageItemForBottomSheet(R.drawable.avatar4, viewModel)
+            ImageItemForBottomSheet(R.drawable.avatar5, viewModel)
+        }
+        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceAround){
+            ImageItemForBottomSheet(R.drawable.avatar6, viewModel)
+            ImageItemForBottomSheet(R.drawable.universal1, viewModel)
+            ImageItemForBottomSheet(R.drawable.univarsal2, viewModel)
+        }
+    }
 }
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun ImageItemForBottomSheet(image : kotlin.Int, viewModel: RegistrationViewModel){
+fun ImageItemForBottomSheet(image : kotlin.Int, viewModel: EditUserDataViewModel){
     Image(
         painter = painterResource(image),
         contentDescription = "image",
@@ -195,7 +179,7 @@ fun ImageItemForBottomSheet(image : kotlin.Int, viewModel: RegistrationViewModel
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun ImageGaleryItemForBottomSheet(image : kotlin.Int, viewModel: RegistrationViewModel,  launcher: ManagedActivityResultLauncher<String, Uri?> = viewModel.OpenGalery()){
+fun ImageGaleryItemForBottomSheet(image : kotlin.Int, viewModel: EditUserDataViewModel, launcher: ManagedActivityResultLauncher<String, Uri?> = viewModel.OpenGalery()){
     Image(
         painter = painterResource(image),
         contentDescription = "image",
@@ -210,4 +194,3 @@ fun ImageGaleryItemForBottomSheet(image : kotlin.Int, viewModel: RegistrationVie
                 viewModel.scope!!.launch {  viewModel.sheetState!!.hide() }}
             .border(2.dp, colorResource(R.color.brown), CircleShape))
 }
-

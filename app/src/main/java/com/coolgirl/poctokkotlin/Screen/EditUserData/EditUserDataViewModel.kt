@@ -1,4 +1,4 @@
-package com.coolgirl.poctokkotlin.Screen.Registration
+package com.coolgirl.poctokkotlin.Screen.EditUserData
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -17,9 +17,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
 import com.coolgirl.poctokkotlin.GetUser
-import com.coolgirl.poctokkotlin.data.dto.UserLoginDataResponse
 import com.coolgirl.poctokkotlin.SetUser
-import com.coolgirl.poctokkotlin.commons.*
+import com.coolgirl.poctokkotlin.commons.EncodeImage
+import com.coolgirl.poctokkotlin.commons.UserDataStore
+import com.coolgirl.poctokkotlin.commons.copyStreamToFile
+import com.coolgirl.poctokkotlin.commons.getResourceNameFromDrawableString
+import com.coolgirl.poctokkotlin.data.dto.UserLoginDataResponse
 import com.coolgirl.poctokkotlin.di.ApiClient
 import com.coolgirl.poctokkotlin.navigate.Screen
 import id.zelory.compressor.Compressor
@@ -33,13 +36,11 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.InputStream
 
-
-class RegistrationViewModel : ViewModel() {
+class EditUserDataViewModel : ViewModel() {
     var userNickname by mutableStateOf("")
     var userDescription by mutableStateOf("")
     var userImage by mutableStateOf("")
     val fileName = mutableStateOf(0)
-    var isEdit by mutableStateOf(false)
     @OptIn(ExperimentalMaterialApi::class)
     var sheetState: ModalBottomSheetState? = null
     var scope: CoroutineScope? = null
@@ -53,9 +54,6 @@ class RegistrationViewModel : ViewModel() {
             User.username = userNickname
             User.userdescription = userDescription
             if(userImage!=null&&!userImage.equals("")){
-                if(userImage.contains(plantApiPath)){
-                    userImage = userImage!!.replace(plantApiPath, "")
-                }
                 User.userimage = userImage
             }
         }
@@ -97,17 +95,6 @@ class RegistrationViewModel : ViewModel() {
         }
     }
 
-    fun LoadData(){
-        if(GetUser()!=null){
-            GetUser()?.userdescription?.let { UpdateUserDescription(it) }
-            GetUser()?.username?.let { UpdateUserNickname(it) }
-            if(GetUser()!!.userimage!=null){
-                userImage = plantApiPath + GetUser()?.userimage.toString()
-                isEdit = true
-            }
-        }
-    }
-
     @SuppressLint("Range", "SuspiciousIndentation")
     @Composable
     fun OpenGalery(context: Context = LocalContext.current): ManagedActivityResultLauncher<String, Uri?> {
@@ -126,9 +113,7 @@ class RegistrationViewModel : ViewModel() {
                     coroutineScope.launch() {
                         file = Compressor.compress(context, outputFile!!) {
                             default(width = 50, format = Bitmap.CompressFormat.JPEG) }
-                        isEdit = false
                         userImage = EncodeImage(file!!.path)
-
                     }
                 }
 
